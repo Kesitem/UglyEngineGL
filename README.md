@@ -1,2 +1,2 @@
-# UglyEngineGL
-A simple C++ / OpenGL Hobby game engine
+# UglyEngine
+A simple C++ OpenGL engine
