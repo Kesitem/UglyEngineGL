@@ -28,6 +28,15 @@ namespace ugly::gl
         bool create(GLenum _shader_type, const char* _source);
 
         /**
+         * @brief Create a shader from file source.
+         * 
+         * @param _shader_type Type of shader
+         * @param _path        Path to the source
+         * @return false if error
+         */
+        bool createFromFile(GLenum _shader_type, const char* _path);
+
+        /**
          * @brief Destroy shader. 
          */
         void destroy();

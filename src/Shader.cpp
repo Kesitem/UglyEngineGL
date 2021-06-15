@@ -38,10 +38,39 @@ bool ugly::gl::Shader::create(GLenum _shader_type, const char* _source)
     {
         glGetShaderInfoLog(m_id, 512, NULL, info_log);
         PLOG_ERROR << "Shader compilation failed: " << info_log;
+        PLOG_DEBUG << "Shader source: " << _source;
         return false;
     }
 
     return true;
+}
+
+
+/**
+ * @brief Create a shader from file source.
+ * 
+ * @param _shader_type Type of shader
+ * @param _path        Path to the source
+ * @return false if error
+ */
+bool ugly::gl::Shader::createFromFile(GLenum _shader_type, const char* _path)
+{
+    // Open file
+    std::ifstream ifs (_path, std::ios::in);
+    if(!ifs)
+    {
+        PLOG_ERROR << "Failed to open shader file: " << _path;
+        return false;
+    }
+
+    // Read file buffer
+    std::ostringstream sstr;
+    sstr << ifs.rdbuf();
+
+    // Close stream
+    ifs.close();
+
+    return create(_shader_type, sstr.str().c_str());
 }
 
 

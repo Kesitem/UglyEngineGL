@@ -5,6 +5,7 @@
 #include <map>
 #include <set>
 #include <optional>
+#include <fstream>
 
 // Include configuration header
 #include "config.h"
