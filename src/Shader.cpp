@@ -1,66 +1,20 @@
 #include "Shader.h"
 
 
-/**
- * @brief Constructor.
- */
-ugly::gl::Shader::Shader()
+ugly::Shader::Shader(ShaderType _shader_type, const char* _source)
 {
+    create(_shader_type, _source);
 }
 
 
-/**
- * @brief Destructor.
- */
-ugly::gl::Shader::~Shader()
-{
-    destroy();
-}
-
-
-/**
- * @brief Create a shader.
- * 
- * @param _shader_type  Type of shader
- * @param _source       Source
- * @return false if error
- */
-bool ugly::gl::Shader::create(GLenum _shader_type, const char* _source)
-{
-    m_id = glCreateShader(_shader_type);
-    glShaderSource(m_id, 1, &_source, NULL);
-    glCompileShader(m_id);
-
-    int  success;
-    char info_log[512];
-    glGetShaderiv(m_id, GL_COMPILE_STATUS, &success);
-    if(!success)
-    {
-        glGetShaderInfoLog(m_id, 512, NULL, info_log);
-        PLOG_ERROR << "Shader compilation failed: " << info_log;
-        PLOG_DEBUG << "Shader source: " << _source;
-        return false;
-    }
-
-    return true;
-}
-
-
-/**
- * @brief Create a shader from file source.
- * 
- * @param _shader_type Type of shader
- * @param _path        Path to the source
- * @return false if error
- */
-bool ugly::gl::Shader::createFromFile(GLenum _shader_type, const char* _path)
+ugly::Shader::Shader(ShaderType _shader_type, const std::filesystem::path& _path)
 {
     // Open file
-    std::ifstream ifs (_path, std::ios::in);
-    if(!ifs)
+    std::ifstream ifs(_path, std::ios::in);
+    if (!ifs)
     {
-        PLOG_ERROR << "Failed to open shader file: " << _path;
-        return false;
+        PLOG_ERROR << "Failed to open shader file: " << _path.c_str();
+        throw new std::runtime_error("Failed to open shader file");
     }
 
     // Read file buffer
@@ -70,16 +24,13 @@ bool ugly::gl::Shader::createFromFile(GLenum _shader_type, const char* _path)
     // Close stream
     ifs.close();
 
-    return create(_shader_type, sstr.str().c_str());
+    create(_shader_type, sstr.str().c_str());
 }
 
 
-/**
- * @brief Destroy shader. 
- */
-void ugly::gl::Shader::destroy()
+ugly::Shader::~Shader()
 {
-    if(m_id != 0)
+    if (m_id != 0)
     {
         glDeleteShader(m_id);
         m_id = 0;
@@ -87,12 +38,27 @@ void ugly::gl::Shader::destroy()
 }
 
 
-/**
- * @brief Get the Id object.
- * 
- * @return Id
- */
-GLuint ugly::gl::Shader::getId() const
+uint32_t ugly::Shader::getId() const
 {
     return m_id;
+}
+
+
+void ugly::Shader::create(ShaderType _shader_type, const char* _source)
+{
+    m_id = glCreateShader((uint32_t)_shader_type);
+    glShaderSource(m_id, 1, &_source, NULL);
+    glCompileShader(m_id);
+
+    int  success;
+    char info_log[512];
+    glGetShaderiv(m_id, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        glGetShaderInfoLog(m_id, 512, NULL, info_log);
+        PLOG_ERROR << (_shader_type == ShaderType::VERTEX ? "Vertex" : "Fragment") << " shader compilation failed: " << info_log;
+        PLOG_DEBUG << "Shader source: " << _source;
+        glDeleteShader(m_id);
+        throw new std::runtime_error("Failed to create shader");
+    }
 }

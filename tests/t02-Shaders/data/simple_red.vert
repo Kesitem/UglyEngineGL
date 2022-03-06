@@ -7,5 +7,5 @@ out vec4 vertexColor;
 void main()
 {
     gl_Position = vec4(aPos, 1.0); // see how we directly give a vec3 to vec4's constructor
-    vertexColor = gl_Position;
+    vertexColor = vec4(0.5, 0.0, 0.0, 1.0);
 }

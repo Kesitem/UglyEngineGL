@@ -1,72 +1,62 @@
 #pragma once
 
 #include "Core.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
 
 namespace ugly
 {
-    namespace gl
+    class VertexArrays
     {
-        class VertexArrays
-        {
-        public:
+    public:
 
-            /**
-             * @brief Constructor.
-             */
-            VertexArrays();
+        /**
+         * @brief Constructor.
+         */
+        VertexArrays();
 
-            /**
-             * @brief Destructor. 
-             */
-            virtual ~VertexArrays();
+        /**
+         * @brief Destructor. 
+         */
+        virtual ~VertexArrays();
 
-            /**
-             * @brief Create vertex array.
-             * 
-             * @return false if error 
-             */
-            bool create();
+        /**
+         * @brief Add a vertex buffer.
+         * 
+         * @param _vertex_buffer    Vertex buffer
+         */
+        void addVertexBuffer(const std::shared_ptr<VertexBuffer>& _vertex_buffer);
 
-            /**
-             * @brief Destroy vertex array.
-             */
-            void destroy();
+        /**
+         * @brief Set index buffer.
+         *
+         * @param _index_buffer Index buffer
+         */
+        void setIndexBuffer(const std::shared_ptr<IndexBuffer>& _index_buffer);
 
-            /**
-             * @brief Define an array of generic vertex attribute data.
-             * 
-             * @param _index        Index of the generic vertex attribute
-             * @param _size         Number of components per generic vertex attribute
-             * @param _type         Data type of each component
-             * @param _normalized   Specifies whether fixed-point data values should be normalized 
-             * @param _stride       Byte offset between consecutive generic vertex attributes
-             * @param _pointer      offset of the first component
-             */
-            void setVertexAttribPointer(GLuint _index, GLint _size, GLenum _type, GLboolean _normalized, GLsizei _stride, const void * _pointer);
+        /**
+            * @brief Bind the vertex arrays.
+            */
+        void bind();
 
-            /**
-             * @brief Enable a generic vertex attribute array.
-             * 
-             * @param _index Index of the generic vertex attribute
-             */
-            void enableVertexAttribArray(GLuint _index);
+        /**
+            * @brief Unbind the vertex arrays.
+            */
+        void unbind();
 
-            /**
-             * @brief Bind the vertex arrays.
-             */
-            void bind();
+    private:
 
-            /**
-             * @brief Unbind the vertex arrays.
-             */
-            void unbind();
+        /*! Vertex arrays id */
+        uint32_t m_id{0};
 
-        private:
+        /*! Number of vertex attrib */
+        uint32_t m_vertex_attrib_index{ 0 };
 
-            /*! Vertex arrays id */
-            GLuint m_id{0};
-        };
+        /*! Vertex buffers */
+        std::vector < std::shared_ptr<VertexBuffer> > m_vertex_buffers;
 
-    }//namespace gl
+        /*! Index buffer */
+        std::shared_ptr<IndexBuffer> m_index_buffer;
+    };
 
 }//namespace ugly

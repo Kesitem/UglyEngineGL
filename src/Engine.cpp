@@ -1,34 +1,24 @@
 #include "Engine.h"
 #include "LogFormatter.h"
-#include "GL.h"
 
-/**
- * \brief Constructor.
- */
+
 ugly::Engine::Engine()
 {
 }
 
 
-/**
- * \brief Destructor.
- */
 ugly::Engine::~Engine()
 {
 }
 
 
-/**
- * \brief Run the application.
- * Engine take ownership of the application. It will destroy application.
- * 
- * \param _application  Application to run
- * \return 0 if ok
- */
 int ugly::Engine::run(Application *_application)
 {
     initializePLog();
 
+    auto path = std::filesystem::current_path();
+    LOG_INFO << "Current path: " << path.c_str();
+    
     if(_application == nullptr)
     {
         LOG_ERROR << "Invalid application";
@@ -38,19 +28,24 @@ int ugly::Engine::run(Application *_application)
     m_application.reset(_application);
     LOG_INFO << "Run application: " << m_application->getName();
 
-    if(!initialize())
+    try
     {
-        PLOG_ERROR << "Failed to initialize engine";
+        initialize();
+    }
+    catch (const std::runtime_error& e)
+    {
+        PLOG_ERROR << "Failed to initialize engine. Error: " << e.what();
+        shutdown();
+        return -2;
+    }
+    catch (...)
+    {
+        PLOG_ERROR << "Failed to initialize engine. Unknown error.";
         shutdown();
         return -2;
     }
 
-    if(!mainLoop())
-    {
-        PLOG_ERROR << "Failed to run main loop";
-        shutdown();
-        return -3;
-    }
+    mainLoop();
 
     shutdown();
 
@@ -58,40 +53,29 @@ int ugly::Engine::run(Application *_application)
 }
 
 
-/**
- * \brief Request application to quit.
- */
 void ugly::Engine::quit()
 {
     m_quit = true;
 }
 
 
-/**
- * \brief Get input manager.
- *
- * \return Input manager
- */
-ugly::InputManager* ugly::Engine::getInputManager() const
+std::shared_ptr<ugly::InputManager> ugly::Engine::getInputManager() const
 {
-    return m_input_manager.get();
+    return m_input_manager;
 }
 
 
-/**
- * \brief Get GLFW window.
- *
- * \return GLFW window.
- */
+std::shared_ptr<ugly::DisplayManager> ugly::Engine::getDisplayManager() const
+{
+    return m_display_manager;
+}
+
 GLFWwindow* ugly::Engine::getWindow() const
 {
     return m_window;
 }
 
 
-/**
- * \brief Initialize plog.
- */
 void ugly::Engine::initializePLog()
 {
     // Remove log file if exists
@@ -115,19 +99,14 @@ void ugly::Engine::initializePLog()
 }
 
 
-/**
- * \brief Initialize engine.
- * 
- * \return false if error
- */
-bool ugly::Engine::initialize()
+void ugly::Engine::initialize()
 {
     PLOG_INFO << "--- Initialize engine";
 
     if(!glfwInit())
     {
         PLOG_ERROR << "Failed to initialize GLFW";
-        return false;
+        throw new std::runtime_error("Failed to initialize GLFW");
     }
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -140,33 +119,29 @@ bool ugly::Engine::initialize()
     if(m_window == nullptr)
     {
         PLOG_ERROR << "Failed to create GLFW window";
-        return false;
+        throw new std::runtime_error("Failed to create GLFW window");
     }
     glfwMakeContextCurrent(m_window);
 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    try
     {
-         PLOG_ERROR << "Failed to initialize GLAD";
-        return false;
+        m_display_manager = std::make_shared<DisplayManager>();
+    }
+    catch (const std::runtime_error& e)
+    {
+        PLOG_ERROR << "Failed to initialize display manager. Error: " << e.what();
+        throw new std::runtime_error("Failed to initialize display manager");
     }
 
-    // Set default viewport
-    glViewport(0, 0, m_display_size.x, m_display_size.y);
+    m_display_manager->setViewport(0, 0, m_display_size.x, m_display_size.y);
 
-    m_input_manager.reset(new InputManager());
-    if(!m_input_manager->initialize())
-    {
-        LOG_ERROR << "Failed to init imput manager";
-        return false;
-    }
+    m_input_manager = std::make_shared<InputManager>();
 
     if(!m_application->initialize())
     {
         LOG_ERROR << "Failed to initialize application";
-        return false;
+        throw new std::runtime_error("Failed to initialize application");
     }
-
-    return true;
 }
 
 
@@ -175,30 +150,27 @@ bool ugly::Engine::initialize()
  */
 void ugly::Engine::shutdown()
 {
+    PLOG_INFO << "--- Shutdown engine";
+
     if(m_application.get() != nullptr)
     {
         m_application->shutdown();
-        m_application.reset(nullptr);
+        m_application.reset();
     }
 
     if(m_input_manager.get() != nullptr)
-    {
-        m_input_manager->shutdown();
-        m_input_manager.reset(nullptr);
-    }
+        m_input_manager.reset();
 
-    PLOG_INFO << "--- Shutdown engine";
+    if (m_display_manager.get() != nullptr)
+        m_display_manager.reset();
+
+
     m_window = nullptr;
     glfwTerminate();
 }
 
 
-/**
- * \brief Execute main loop.
- * 
- * \return false if error
- */
-bool ugly::Engine::mainLoop()
+void ugly::Engine::mainLoop()
 {
     while(!m_quit)
     {
@@ -211,6 +183,4 @@ bool ugly::Engine::mainLoop()
         glfwSwapBuffers(m_window);
         glfwPollEvents();    
     }
-
-    return true;
 }

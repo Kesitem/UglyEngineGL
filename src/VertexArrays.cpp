@@ -1,43 +1,16 @@
 #include "VertexArrays.h"
 
 
-/**
- * @brief Constructor.
- */
-ugly::gl::VertexArrays::VertexArrays()
-{
-}
-
-
-/**
- * @brief Destructor. 
- */
-ugly::gl::VertexArrays::~VertexArrays()
-{
-    destroy();
-}
-
-
-/**
- * @brief Create vertex array.
- * 
- * @return false if error 
- */
-bool ugly::gl::VertexArrays::create()
+ugly::VertexArrays::VertexArrays()
 {
     glGenVertexArrays(1, &m_id);
     bind();
-
-    return true;
 }
 
 
-/**
- * @brief Destroy vertex array.
- */
-void ugly::gl::VertexArrays::destroy()
+ugly::VertexArrays::~VertexArrays()
 {
-    if(m_id != 0)
+    if (m_id != 0)
     {
         glDeleteVertexArrays(1, &m_id);
         m_id = 0;
@@ -45,45 +18,52 @@ void ugly::gl::VertexArrays::destroy()
 }
 
 
-/**
- * @brief Define an array of generic vertex attribute data.
- * 
- * @param _index        Index of the generic vertex attribute
- * @param _size         Number of components per generic vertex attribute
- * @param _type         Data type of each component
- * @param _normalized   Specifies whether fixed-point data values should be normalized 
- * @param _stride       Byte offset between consecutive generic vertex attributes
- * @param _pointer      offset of the first component
- */
-void ugly::gl::VertexArrays::setVertexAttribPointer(GLuint _index, GLint _size, GLenum _type, GLboolean _normalized, GLsizei _stride, const void * _pointer)
+void ugly::VertexArrays::addVertexBuffer(const std::shared_ptr<VertexBuffer>& _vertex_buffer)
 {
-    glVertexAttribPointer(_index, _size, _type, _normalized, _stride, _pointer);
+    bind();
+    _vertex_buffer->bind();
+
+    const auto& layout = _vertex_buffer->getLayout();
+    for (const auto& element : layout->getElements())
+    {
+        switch (element.type)
+        {
+        case BufferDataType::FLOAT2:
+        case BufferDataType::FLOAT3:
+            glEnableVertexAttribArray(m_vertex_attrib_index);
+            glVertexAttribPointer(m_vertex_attrib_index,
+                ugly::getBufferDataComponentCount(element.type),
+                ugly::getBufferDataComponentOpenGLType(element.type),
+                element.normalized ? GL_TRUE : GL_FALSE,
+                layout->getStride(),
+                (const void*)element.offset);
+            m_vertex_attrib_index++;
+            break;
+        }
+    }
+
+    m_vertex_buffers.push_back(_vertex_buffer);
 }
 
 
-/**
- * @brief Enable a generic vertex attribute array.
- * 
- * @param _index Index of the generic vertex attribute
- */
-void ugly::gl::VertexArrays::enableVertexAttribArray(GLuint _index)
+void ugly::VertexArrays::setIndexBuffer(const std::shared_ptr<IndexBuffer>& _index_buffer)
 {
-    glEnableVertexAttribArray(_index);
+
+    bind();
+    _index_buffer->bind();
+
+    m_index_buffer = _index_buffer;
 }
 
 
-/**
- * @brief Bind the vertex arrays.
- */
-void ugly::gl::VertexArrays::bind()
+
+void ugly::VertexArrays::bind()
 {
     glBindVertexArray(m_id);
 }
 
-/**
- * @brief Unbind the vertex arrays.
- */
-void ugly::gl::VertexArrays::unbind()
+
+void ugly::VertexArrays::unbind()
 {
     glBindVertexArray(0);
 }

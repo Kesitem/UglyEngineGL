@@ -3,6 +3,7 @@
 #include "Core.h"
 #include "Application.h"
 #include "InputManager.h"
+#include "DisplayManager.h"
 
 namespace ugly
 {
@@ -40,11 +41,18 @@ public:
     void quit();
 
     /**
+     * \brief Get display manager.
+     *
+     * \return Display manager
+     */
+    std::shared_ptr<DisplayManager> getDisplayManager() const;
+
+    /**
      * \brief Get input manager.
      *
      * \return Input manager
      */
-    InputManager* getInputManager() const;
+    std::shared_ptr<InputManager> getInputManager() const;
 
     /**
      * \brief Get GLFW window.
@@ -72,10 +80,8 @@ private:
 
     /**
      * \brief Initialize engine.
-     * 
-     * \return false if error
      */
-    bool initialize();
+    void initialize();
 
     /**
      * \brief Shutdown engine.
@@ -87,7 +93,7 @@ private:
      * 
      * \return false if error
      */
-    bool mainLoop();
+    void mainLoop();
 
 private:
 
@@ -98,14 +104,16 @@ private:
     GLFWwindow* m_window {nullptr};
 
     /*! Display size */
-    glm::ivec2 m_display_size {glm::ivec2(1280, 720)};
+    glm::ivec2 m_display_size {glm::ivec2(960, 540)};
 
     /*! Quit flag */
     bool m_quit {false};
     
     /*! Input manager */
-    std::unique_ptr<InputManager> m_input_manager {nullptr};
+    std::shared_ptr<InputManager> m_input_manager {nullptr};
 
+    /*! Display manager */
+    std::shared_ptr<DisplayManager> m_display_manager{ nullptr };
 };
 
 }//namespace ugly

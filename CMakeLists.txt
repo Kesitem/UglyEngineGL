@@ -16,6 +16,9 @@ find_package(glfw3 CONFIG REQUIRED)
 # Add glm
 find_package(glm CONFIG REQUIRED)
 
+# Add stb
+find_path(STB_INCLUDE_DIRS "stb.h")
+
 # Set sources files path
 set(INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -36,11 +39,13 @@ set(HEADERS
     InputStats.h
     InputButton.h
     InputManager.h
-    GL.h
+    DisplayManager.h
     VertexArrays.h
-    BufferObject.h
+    VertexBuffer.h
+    IndexBuffer.h
     Program.h
     Shader.h
+    Texture.h
 )
 # List of source files
 set(SRCS
@@ -50,11 +55,13 @@ set(SRCS
     Application.cpp
     InputButton.cpp
     InputManager.cpp
-    GL.cpp
+    DisplayManager.cpp
     VertexArrays.cpp
-    BufferObject.cpp
+    VertexBuffer.cpp
+    IndexBuffer.cpp
     Program.cpp
     Shader.cpp
+    Texture.cpp
 )
 
 # Generate filename with path
@@ -66,7 +73,7 @@ foreach(S ${SRCS})
 endforeach()
 
 # Create library
-add_library(${PROJECT_NAME} STATIC ${ALL_SRCS} ${ALL_HEADERS})
+add_library(${PROJECT_NAME} STATIC ${ALL_SRCS} ${ALL_HEADERS} ${STB_INCLUDE_DIRS})
 
 # Set C++17 feature
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)

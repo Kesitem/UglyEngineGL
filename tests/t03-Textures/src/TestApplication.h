@@ -50,64 +50,43 @@ private:
     void createQuad();
 
     /**
-     * @brief Draw quad.
+     * @brief Draw triangle.
      */
     void drawQuad();
 
     /**
-     * @brief Create triangles data.
+     * @brief Draw quad with reverse face.
      */
-    void createTriangles();
-
-    /**
-     * @brief Draw triangles.
-     */
-    void drawTriangles();
-
-    /**
-     * @brief Create triangles data.
-     */
-    void createTriangles2VA();
-
-    /**
-     * @brief Draw triangles.
-     */
-    void drawTriangles2VA();
-
-    /**
-     * @brief Draw triangles.
-     */
-    void drawTriangles2VA2Programs();
+    void drawQuadReverse();
 
 private:
 
-    /*! Input manager */
-    std::shared_ptr<ugly::InputManager> m_input_manager {nullptr};
-
-    /*! Display manager */
-    std::shared_ptr<ugly::DisplayManager> m_display_manager{ nullptr };
+    std::shared_ptr<ugly::InputManager> m_input_manager;
+    std::shared_ptr<ugly::DisplayManager> m_display_manager;
 
     /*! Triangle VAO */
     std::shared_ptr<ugly::VertexArrays> m_triangle_va;
 
-    /*! Triangle VAO */
-    std::shared_ptr<ugly::VertexArrays> m_triangles_va;
-
-    /*! Quad VAO */
-    std::shared_ptr<ugly::VertexArrays> m_quad_va;
-
-    std::shared_ptr<ugly::VertexArrays> m_triangles_20_va;
-
-    std::shared_ptr<ugly::VertexArrays> m_triangles_21_va;
-
-    /*! Triangle VBO */
-    std::shared_ptr<ugly::VertexBuffer> m_triangle_bo;
+    /*! Texture */
+    std::shared_ptr<ugly::Texture> m_texture;
 
     /*! Program */
     std::shared_ptr<ugly::Program> m_shader_program;
 
-    /*! Program yellow */
-    std::shared_ptr<ugly::Program> m_shader_program_yellow;
+    /*! Quad VAO */
+    std::shared_ptr<ugly::VertexArrays> m_quad_va;
+
+    /*! Quad texture */
+    std::shared_ptr<ugly::Texture> m_quad_texture;
+
+    /*! Program */
+    std::shared_ptr<ugly::Program> m_quad_shader_program;
+
+    /*! Shader with reverse face */
+    std::shared_ptr<ugly::Program> m_quad_reverse_shader_program;
+
+    /*! Face texture */
+    std::shared_ptr<ugly::Texture> m_face_texture;
 
     /*! Wireframe flag */
     bool m_wireframe {false};

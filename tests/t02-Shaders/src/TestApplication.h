@@ -34,36 +34,26 @@ public:
 
 private:
 
-    /**
-     * @brief Create triangle data.
-     */
-    void createTriangle();
+    std::shared_ptr<ugly::InputManager> m_input_manager;
 
-    /**
-     * @brief Destroy triangle data.
-     */
-    void destroyTriangle();
+    std::shared_ptr<ugly::DisplayManager> m_display_manager;
 
-    /**
-     * @brief Draw triangle.
-     */
-    void drawTriangle();
+    std::shared_ptr<ugly::VertexArrays> m_triangle_va;
 
-private:
+    std::shared_ptr<ugly::VertexArrays> m_color_triangle_va;
 
-    /*! Triangle VAO */
-    ugly::gl::VertexArrays m_triangle_va;
+    std::shared_ptr<ugly::Program> m_shader_program_red;
 
-    /*! Triangles VBO */
-    ugly::gl::BufferObject m_triangle_bo;
+    std::shared_ptr<ugly::Program> m_shader_program_uniform;
 
-    /*! Quad element buffer */
-    ugly::gl::BufferObject m_quad_eb;
+    std::shared_ptr<ugly::Program> m_shader_program_color;
 
-    /*! Program */
-    ugly::gl::Program m_shader_program;
+    std::shared_ptr<ugly::Program> m_shader_program_color_inverted;
 
-    /*! Wireframe flag */
+    std::shared_ptr<ugly::Program> m_shader_program_color_offset;
+
+    std::shared_ptr<ugly::Program> m_shader_program_color_pos;
+
     bool m_wireframe {false};
 
     /*! Render type. 0 = triangle, 1 = quad */

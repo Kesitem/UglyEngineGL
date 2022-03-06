@@ -2,30 +2,40 @@
 
 #include "Core.h"
 
-namespace ugly::gl
+namespace ugly
 {
+    enum class ShaderType
+    {
+        VERTEX = 35633,
+        FRAGMENT = 35632
+    };
+
     class Shader
     {
     public:
 
+        Shader(const Shader& _shader) = delete;
+
         /**
-         * @brief Constructor.
+         * @brief Constructor from shader source.
+         * 
+         * @param _shader_type  Type of shader
+         * @param _source       Source
          */
-        Shader();
+        Shader(ShaderType _shader_type, const char* _source);
+
+        /**
+         * @brief Constructor from shader source file.
+         *
+         * @param _shader_type  Type of shader
+         * @param _path         Source file path
+         */
+        Shader(ShaderType _shader_type, const std::filesystem::path& _path);
 
         /**
          * @brief Destructor.
          */
         virtual ~Shader();
-
-        /**
-         * @brief Create a shader.
-         * 
-         * @param _shader_type  Type of shader
-         * @param _source       Source
-         * @return false if error
-         */
-        bool create(GLenum _shader_type, const char* _source);
 
         /**
          * @brief Create a shader from file source.
@@ -34,23 +44,28 @@ namespace ugly::gl
          * @param _path        Path to the source
          * @return false if error
          */
-        bool createFromFile(GLenum _shader_type, const char* _path);
-
-        /**
-         * @brief Destroy shader. 
-         */
-        void destroy();
+        bool createFromFile(ShaderType _shader_type, const char* _path);
 
         /**
          * @brief Get the Id object.
          * 
          * @return Id
          */
-        GLuint getId() const;
+        uint32_t getId() const;
+
+    private:
+
+        /**
+         * @brief Create the shader from source.
+         *
+         * @param   _shader_type    Type of shader
+         * @param   _source         Source of the shader
+         */
+        void create(ShaderType _shader_type, const char* _source);
 
     private:
 
         /*! Shader id */
-        GLuint m_id{0};
+        uint32_t m_id{0};
     };
 }

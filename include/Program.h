@@ -2,7 +2,7 @@
 
 #include "Core.h"
 
-namespace ugly::gl
+namespace ugly
 {
     class Shader;
 
@@ -14,37 +14,25 @@ namespace ugly::gl
     public:
 
         /**
-         * @brief Constructor.
+         * @brief Constructor from Shader objects.
+         * 
+         * @param _vertex_shader    Vertex shader 
+         * @param _fragment_shader  Program shader
          */
-        Program();
+        Program(std::shared_ptr<Shader> _vertex_shader, std::shared_ptr<Shader> _fragment_shader);
+
+        /**
+         * @brief Constructor from path to shader files.
+         *
+         * @param _vertex_shader_path    Vertex shader path
+         * @param _fragment_shader_path  Program shader path
+         */
+        Program(const std::filesystem::path& _vertex_sharder_path, const std::filesystem::path& _fragment_shader_path);
 
         /**
          * @brief Destructor.
          */
         virtual ~Program();
-
-        /**
-         * @brief Create program
-         * 
-         * @param _vertex_shader    Vertex shader 
-         * @param _fragment_shader  Program shader
-         * @return false if error
-         */
-        bool create(const Shader * _vertex_shader, const Shader * _fragment_shader);
-
-        /**
-         * @brief Create program from shader source file.
-         * 
-         * @param _vertex_shader_file   Vertex shader source file 
-         * @param _fragment_shader_file Fragment shader source file
-         * @return false  if error
-         */
-        bool createFromFile(const char * _vertex_shader_file, const char * _fragment_shader_file);
-
-        /**
-         * @brief Destroy program.
-         */
-        void destroy();
 
         /**
          * @brief Use shader program.
@@ -66,6 +54,22 @@ namespace ugly::gl
          * @param _value    Value
          */
         void setUniform(const std::string &_name, const glm::vec4 &_value);
+
+        /**
+         * @brief Set the Uniform unsigned int value
+         *
+         * @param _name     Uniform name
+         * @param _value    Value
+         */
+        void setUniform(const std::string& _name, const uint32_t& _value);
+
+        /**
+         * @brief Set the Uniform unsigned int value
+         *
+         * @param _name     Uniform name
+         * @param _value    Value
+         */
+        void setUniform(const std::string& _name, const int32_t& _value);
 
     private:
 

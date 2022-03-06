@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 
-project(t02-Shaders VERSION 1.0.0
-                    DESCRIPTION "Use shaders"
+project(t03-Textures VERSION 1.0.0
+                    DESCRIPTION "Textures"
                     LANGUAGES CXX)
 
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -32,6 +32,6 @@ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 target_link_libraries(${PROJECT_NAME} PRIVATE UglyEngine)
 
 # Copy data directory
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
                    ${CMAKE_CURRENT_SOURCE_DIR}/data $<TARGET_FILE_DIR:${PROJECT_NAME}>/data)

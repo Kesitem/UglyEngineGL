@@ -21,17 +21,6 @@ public:
     InputManager();
 
     /**
-     * \brief Initialize manager.
-     * \return False if error
-     */
-    bool initialize();
-
-    /**
-     * \brief Shutdown.
-     */
-    void shutdown();
-
-    /**
      * \brief Update state manager.
      *
      * This function updates state(for exemple pass key state from released to none).

@@ -6,6 +6,7 @@
 #include <set>
 #include <optional>
 #include <fstream>
+#include <filesystem>
 
 // Include configuration header
 #include "config.h"
@@ -23,6 +24,9 @@
 // Include glm
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
+
+// Include stb
+#include "stb_image.h"
 
 // Constants declaration
 namespace ugly

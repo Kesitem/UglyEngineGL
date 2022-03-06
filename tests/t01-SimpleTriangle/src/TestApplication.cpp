@@ -42,12 +42,15 @@ TestApplication::TestApplication()
  */
 bool TestApplication::initialize()
 {
-    ugly::Engine::getInstance()->getInputManager()->createButton("quit");
-    ugly::Engine::getInstance()->getInputManager()->bindKeyToButton(GLFW_KEY_ESCAPE, "quit");
-    ugly::Engine::getInstance()->getInputManager()->createButton("wireframe");
-    ugly::Engine::getInstance()->getInputManager()->bindKeyToButton(GLFW_KEY_W, "wireframe");
-    ugly::Engine::getInstance()->getInputManager()->createButton("render-type");
-    ugly::Engine::getInstance()->getInputManager()->bindKeyToButton(GLFW_KEY_R, "render-type");
+    m_input_manager = ugly::Engine::getInstance()->getInputManager();
+    m_display_manager = ugly::Engine::getInstance()->getDisplayManager();
+
+    m_input_manager->createButton("quit");
+    m_input_manager->bindKeyToButton(GLFW_KEY_ESCAPE, "quit");
+    m_input_manager->createButton("wireframe");
+    m_input_manager->bindKeyToButton(GLFW_KEY_W, "wireframe");
+    m_input_manager->createButton("render-type");
+    m_input_manager->bindKeyToButton(GLFW_KEY_R, "render-type");
 
     createTriangle();
     createQuad();
@@ -55,27 +58,19 @@ bool TestApplication::initialize()
     createTriangles2VA();
 
     // Create vertex shader
-    ugly::gl::Shader vertex_shader;
-    vertex_shader.create(GL_VERTEX_SHADER, vertex_shader_source);
+    auto vertex_shader = std::make_shared<ugly::Shader>(ugly::ShaderType::VERTEX, vertex_shader_source);
 
     // Create fragment shader
-    ugly::gl::Shader fragment_shader;
-    fragment_shader.create(GL_FRAGMENT_SHADER, fragment_shader_source);
+    auto fragment_shader = std::make_shared<ugly::Shader>(ugly::ShaderType::FRAGMENT, fragment_shader_source);
 
     // Create fragment shader yellow
-    ugly::gl::Shader fragment_shader_yellow;
-    fragment_shader_yellow.create(GL_FRAGMENT_SHADER, fragment_shader_source_yellow);
+    auto fragment_shader_yellow = std::make_shared< ugly::Shader>(ugly::ShaderType::FRAGMENT, fragment_shader_source_yellow);
 
     // Create program
-    m_shader_program.create(&vertex_shader, &fragment_shader);
+    m_shader_program = std::make_shared<ugly::Program>(vertex_shader, fragment_shader);
  
     // Create yellow
-    m_shader_program_yellow.create(&vertex_shader, &fragment_shader_yellow);
-
-    // Delete shaders  
-    vertex_shader.destroy();
-    fragment_shader.destroy(); 
-    fragment_shader_yellow.destroy(); 
+    m_shader_program_yellow = std::make_shared<ugly::Program>(vertex_shader, fragment_shader_yellow);
 
     return true;
 }
@@ -86,12 +81,6 @@ bool TestApplication::initialize()
  */
 void TestApplication::shutdown()
 {
-    destroyTriangle();
-    destroyQuad();
-    destroyTriangles();
-    destroyTriangles2VA();
-    m_shader_program.destroy();
-    m_shader_program_yellow.destroy();
 }
 
 
@@ -112,13 +101,14 @@ void TestApplication::update()
     }
 
         
-    ugly::gl::setClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    ugly::gl::clear(GL_COLOR_BUFFER_BIT);
+    m_display_manager->setClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    m_display_manager->clear();
 
-    if(m_wireframe)
-        ugly::gl::setPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    if (m_wireframe)
+        m_display_manager->setPolygonMode(ugly::DisplayManager::PolygoneMode::LINE);
     else
-        ugly::gl::setPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        m_display_manager->setPolygonMode(ugly::DisplayManager::PolygoneMode::FILL);
+
 
     switch(m_render_type)
     {
@@ -164,104 +154,79 @@ void TestApplication::createTriangle()
     };  
 
     // Create and bind vertex array
-    m_triangle_va.create();
+    m_triangle_va = std::make_shared<ugly::VertexArrays>();
 
     // Create vertex buffer
-    m_triangle_bo.create(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    
+    m_triangle_bo = std::make_shared<ugly::VertexBuffer>(sizeof(vertices), vertices);
+    m_triangle_bo->setLayout(
+        std::make_shared<ugly::BufferLayout>(std::initializer_list<ugly::BufferElement>{
+            ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false) }));
 
     // Set vertex pointer
-    m_triangle_va.setVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    m_triangle_va.enableVertexAttribArray(0);
+    m_triangle_va->addVertexBuffer(m_triangle_bo);
 
     // Unbind vertex array
-    m_triangle_va.unbind();
+    m_triangle_va->unbind();
 }
 
 
-/**
- * @brief Destroy triangle data.
- */
-void TestApplication::destroyTriangle()
-{
-    m_triangle_va.destroy();
-    m_triangle_bo.destroy();
-}
-
-
-/**
- * @brief Draw triangle.
- */
 void TestApplication::drawTriangle()
 {
-    m_shader_program.use();
-    m_triangle_va.bind();
-    ugly::gl::drawArrays(GL_TRIANGLES, 0, 3);
-    m_triangle_va.unbind();
+    m_shader_program->use();
+    m_triangle_va->bind();
+    m_display_manager->drawArrays(3, 0);
+    m_triangle_va->unbind();
 }
 
 
-/**
- * @brief Create a Quad data.
- */
 void TestApplication::createQuad()
 {
-    GLfloat vertices[] = 
+    float vertices[] = 
     {
         0.5f,  0.5f, 0.0f,  // top right
         0.5f, -0.5f, 0.0f,  // bottom right
         -0.5f, -0.5f, 0.0f,  // bottom left
         -0.5f,  0.5f, 0.0f   // top left 
     };
-    GLuint indices[] = 
+    uint32_t indices[] = 
     {  // note that we start from 0!
         0, 1, 3,   // first triangle
         1, 2, 3    // second triangle
     };
 
     // Create and bind vertex array
-    m_quad_va.create();
+    m_quad_va = std::make_shared<ugly::VertexArrays>();
 
     // Create vertex buffer and bind vertex buffer
-    m_quad_bo.create(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    auto quad_bo = std::make_shared<ugly::VertexBuffer>(sizeof(vertices), vertices);
+    quad_bo->setLayout(
+        std::make_shared<ugly::BufferLayout>(
+            std::initializer_list<ugly::BufferElement>{ 
+                ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false) }));
  
     // Set vertex pointer
-    m_quad_va.setVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
-    m_quad_va.enableVertexAttribArray(0);    
+    m_quad_va->addVertexBuffer(quad_bo);
 
     // Create element buffer
-    m_quad_eb.create(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    auto quad_eb = std::make_shared<ugly::IndexBuffer>(sizeof(indices), indices);
+    m_quad_va->setIndexBuffer(quad_eb);
 
     // Unbind vertex array
-    m_quad_va.unbind();
+    m_quad_va->unbind();
 }
 
 
-/**
- * @brief Destroy quad data.
- */
-void TestApplication::destroyQuad()
-{
-    m_quad_va.destroy();
-    m_quad_bo.destroy();
-    m_quad_eb.destroy();
-}
-
-
-/**
- * @brief Draw Quad.
- */
 void TestApplication::drawQuad()
 {
-    m_shader_program.use();
-    m_quad_va.bind();
-    ugly::gl::drawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    m_quad_va.unbind();
+    m_shader_program->use();
+    m_quad_va->bind();
+    m_display_manager->drawElements(6);
+    m_quad_va->unbind();
+
 }
 
 
-/**
- * @brief Create triangles data.
- */
 void TestApplication::createTriangles()
 {
     float vertices[] = 
@@ -275,39 +240,28 @@ void TestApplication::createTriangles()
     };  
 
     // Create and bind vertex array
-    m_triangles_va.create();
+    m_triangles_va = std::make_shared<ugly::VertexArrays>();
 
     // Create vertex buffer
-    m_triangles_bo.create(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    auto triangles_bo = std::make_shared<ugly::VertexBuffer>(sizeof(vertices), vertices);
+    triangles_bo->setLayout(
+        std::make_shared<ugly::BufferLayout>(
+            std::initializer_list<ugly::BufferElement>{ ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false) }));
 
     // Set vertex pointer
-    m_triangles_va.setVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    m_triangles_va.enableVertexAttribArray(0);
+    m_triangles_va->addVertexBuffer(triangles_bo);
 
     // Unbind vertex array
-    m_triangles_va.unbind(); 
+    m_triangles_va->unbind(); 
 }
 
 
-/**
- * @brief Destroy triangles data.
- */
-void TestApplication::destroyTriangles()
-{
-    m_triangles_va.destroy();
-    m_triangles_bo.destroy();
-}
-
-
-/**
- * @brief Draw triangles.
- */
 void TestApplication::drawTriangles()
 {
-    m_shader_program.use();
-    m_triangles_va.bind();
-    ugly::gl::drawArrays(GL_TRIANGLES, 0, 6);
-    m_triangles_va.unbind();
+    m_shader_program->use();
+    m_triangles_va->bind();
+    m_display_manager->drawArrays(6);
+    m_triangles_va->unbind();
 }
 
 
@@ -324,17 +278,19 @@ void TestApplication::createTriangles2VA()
     };
 
     // Create and bind vertex array
-    m_triangles_20_va.create();
+    m_triangles_20_va = std::make_shared<ugly::VertexArrays>();
 
     // Create vertex buffer
-    m_triangles_20_bo.create(GL_ARRAY_BUFFER, sizeof(vertices0), vertices0, GL_STATIC_DRAW);
+    auto triangles_20_bo = std::make_shared<ugly::VertexBuffer>(sizeof(vertices0), vertices0);
+    triangles_20_bo->setLayout(
+        std::make_shared<ugly::BufferLayout>(
+            std::initializer_list<ugly::BufferElement>{ ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false) }));
     
     // Set vertex pointer
-    m_triangles_20_va.setVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    m_triangles_20_va.enableVertexAttribArray(0);
+    m_triangles_20_va->addVertexBuffer(triangles_20_bo);
 
     // Unbind vertex array
-    m_triangles_20_va.unbind(); 
+    m_triangles_20_va->unbind(); 
 
     float vertices1[] = 
     {
@@ -344,44 +300,31 @@ void TestApplication::createTriangles2VA()
     };   
 
     // Create and bind vertex array
-    m_triangles_21_va.create();
+    m_triangles_21_va = std::make_shared<ugly::VertexArrays>();
 
     // Create vertex buffer
-    m_triangles_21_bo.create(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW);
-    
+    auto triangles_21_bo = std::make_shared<ugly::VertexBuffer>(sizeof(vertices1), vertices1);
+    triangles_21_bo->setLayout(
+        std::make_shared<ugly::BufferLayout>(
+            std::initializer_list{ ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false) }));
+
     // Set vertex pointer
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
+    m_triangles_21_va->addVertexBuffer(triangles_21_bo);
 
     // Unbind vertex array
-    glBindVertexArray(0); 
+    m_triangles_21_va->unbind();
 }    
 
 
-/**
- * @brief Destroy triangles data.
- */
-void TestApplication::destroyTriangles2VA()
-{
-    m_triangles_20_va.destroy();
-    m_triangles_20_bo.destroy();
-    m_triangles_21_va.destroy();
-    m_triangles_21_bo.destroy();
-}
-
-
-/**
- * @brief Draw triangles.
- */
 void TestApplication::drawTriangles2VA()
 {
-    m_shader_program.use();
-    m_triangles_20_va.bind();
-    ugly::gl::drawArrays(GL_TRIANGLES, 0, 3);
-    m_triangles_20_va.unbind();
-    m_triangles_21_va.bind();
-    ugly::gl::drawArrays(GL_TRIANGLES, 0, 3);
-    m_triangles_21_va.unbind();
+    m_shader_program->use();
+    m_triangles_20_va->bind();
+    m_display_manager->drawArrays(3);
+    m_triangles_20_va->unbind();
+    m_triangles_21_va->bind();
+    m_display_manager->drawArrays(3);
+    m_triangles_21_va->unbind();
 }
 
 
@@ -390,13 +333,13 @@ void TestApplication::drawTriangles2VA()
  */
 void TestApplication::drawTriangles2VA2Programs()
 {
-    m_shader_program.use();
-    m_triangles_20_va.bind();
-    ugly::gl::drawArrays(GL_TRIANGLES, 0, 3);
-    m_triangles_20_va.unbind();
+    m_shader_program->use();
+    m_triangles_20_va->bind();
+    m_display_manager->drawArrays(3);
+    m_triangles_20_va->unbind();
 
-    m_shader_program_yellow.use();
-    m_triangles_21_va.bind();
-    ugly::gl::drawArrays(GL_TRIANGLES, 0, 3);
-    m_triangles_21_va.unbind();
+    m_shader_program_yellow->use();
+    m_triangles_21_va->bind();
+    m_display_manager->drawArrays(3);
+    m_triangles_21_va->unbind();
 }

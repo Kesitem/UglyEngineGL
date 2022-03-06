@@ -14,44 +14,13 @@ void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int 
 }
 
 
-/**
- *  \brief Constructor.
- */
 ugly::InputManager::InputManager()
 {
-}
-
-
-/**
- * \brief Initialize manager.
- * \return False if error
- */
-bool ugly::InputManager::initialize()
-{
-    LOG_INFO << "Initialize input manager...";
-    
     // Register input callbacks
     glfwSetKeyCallback(ugly::Engine::getInstance()->getWindow(), glfwKeyCallback);
-
-    return true;
 }
 
 
-/**
- * \brief Shutdown.
- */
-void ugly::InputManager::shutdown()
-{
-    LOG_INFO << "Shutdown input manager...";
-}
-
-
-/**
- * \brief Update state manager.
- *
- * This function updates state(for exemple pass key state from released to none).
- * It must be call after event processing and before polling events.
- */
 void ugly::InputManager::update()
 {
     for(auto const &button_itor : m_buttons)
@@ -66,14 +35,6 @@ void ugly::InputManager::update()
 }
 
 
-/**
- * \brief Process a key change.
- * 
- * This method is mainly used by GLFW key callback.
- * If key is not bind, nothing happens.
- * \param key_name  GLFW key name
- * \param action    GLFW action
- */
 void ugly::InputManager::processKeyChange(int key_name, int action)
 {
     // Check if key is binded
@@ -103,11 +64,6 @@ void ugly::InputManager::processKeyChange(int key_name, int action)
 }
 
 
-/**
- * \brief Create a button.
- * 
- * \param button_name   InputButton name
- */
 void ugly::InputManager::createButton(const std::string& button_name)
 {
     PLOG_INFO << "Create input button: " << button_name;
@@ -123,12 +79,6 @@ void ugly::InputManager::createButton(const std::string& button_name)
 }
 
 
-/**
- * \brief Bind a key to a button.
- * 
- * \param key_name      GFLW key name
- * \param button_name   Button name
- */
 void ugly::InputManager::bindKeyToButton(int key_name, const std::string& button_name)
 {
     LOG_INFO << "Bind key: " <<  key_name << " to input button: " << button_name; 
@@ -151,12 +101,6 @@ void ugly::InputManager::bindKeyToButton(int key_name, const std::string& button
 }
 
 
-/**
- * \brief Get a button state.
- * 
- * \param button_name   InputButton name
- * \return InputButton state
- */
 const ugly::InputState& ugly::InputManager::getButtonState(const std::string& button_name)
 {
     auto button_map_itor = m_buttons.find(button_name);
@@ -171,12 +115,6 @@ const ugly::InputState& ugly::InputManager::getButtonState(const std::string& bu
 }
 
 
-/**
- * \brief Get a button action.
- * 
- * \param button_name   InputButton name
- * \return InputButton last action
- */
 const ugly::InputAction& ugly::InputManager::getButtonAction(const std::string& button_name)
 {
     auto button_map_itor = m_buttons.find(button_name);

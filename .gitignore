@@ -34,3 +34,28 @@
 # Directories
 /.vscode
 /build
+.vs/CMake Overview
+.vs/cmake.db
+.vs/ProjectSettings.json
+.vs/slnx.sqlite
+.vs/VSWorkspaceState.json
+.vs/UglyEngineGL/project-colors.json
+.vs/UglyEngineGL/v16/.suo
+.vs/UglyEngineGL/v16/Browse.VC.db
+.vs/UglyEngineGL/v17/.suo
+.vs/UglyEngineGL/v17/Browse.VC.db
+out/build/x64-Debug/CMakeCache.txt
+out/build/x64-Debug/VSInheritEnvironments.txt
+out/build/x64-Debug/.cmake/api/v1/query/client-MicrosoftVS/query.json
+out/build/x64-Debug/CMakeFiles/cmake.check_cache
+out/build/x64-Debug/CMakeFiles/CMakeOutput.log
+out/build/x64-Debug/CMakeFiles/3.21.21080301-MSVC_2/CMakeCXXCompiler.cmake
+out/build/x64-Debug/CMakeFiles/3.21.21080301-MSVC_2/CMakeDetermineCompilerABI_CXX.bin
+out/build/x64-Debug/CMakeFiles/3.21.21080301-MSVC_2/CMakeRCCompiler.cmake
+out/build/x64-Debug/CMakeFiles/3.21.21080301-MSVC_2/CMakeSystem.cmake
+out/build/x64-Debug/CMakeFiles/3.21.21080301-MSVC_2/CompilerIdCXX/CMakeCXXCompilerId.cpp
+out/build/x64-Debug/CMakeFiles/ShowIncludes/foo.h
+out/build/x64-Debug/CMakeFiles/ShowIncludes/main.c
+CMakeSettings.json
+/.vs/UglyEngineGL/v17
+/out/build/x64-Debug

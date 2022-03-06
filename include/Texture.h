@@ -1,0 +1,63 @@
+#pragma once
+
+#include "Core.h"
+
+namespace ugly
+{
+    class Texture
+    {
+    public:
+
+        enum class WrapFilter
+        {
+            REPEAT = GL_REPEAT,
+            MIRRORED_REPEAT = GL_MIRRORED_REPEAT,
+            CLAMP_TO_EDGE = GL_CLAMP_TO_EDGE,
+            CLAMP_TO_BORDER = GL_CLAMP_TO_BORDER
+        };
+
+
+        /**
+         * @brief Constructor.
+         */
+        Texture(const char* _filename, 
+            int32_t min_filter = GL_LINEAR_MIPMAP_LINEAR, 
+            int32_t mag_filter = GL_LINEAR, 
+            WrapFilter wrap_s = WrapFilter::MIRRORED_REPEAT,
+            WrapFilter wrap_t = WrapFilter::MIRRORED_REPEAT);
+
+        /**
+         * @brief Destructor.
+         */
+        virtual ~Texture();
+
+        /**
+         * @brief Bind texture.
+         * 
+         * @param _unit Texture unit
+         */
+        void bind(uint32_t _unit = 0);
+
+        /**
+         * @brief Set texture filtering paramaters
+         * 
+         * @param min_filter Minifying parameter
+         * @param mag_filter Magnifying parameter
+         */
+        void setFilter(int32_t min_filter, int32_t mag_filter);
+
+        /**
+         * @brief Set the texture wrap paramaters.
+         * 
+         * @param wrap_s Wrapping paramater on s
+         * @param wrap_t Wrapping paramater on t
+         */
+        void setWrap(WrapFilter wrap_s, WrapFilter wrap_t);
+
+    private:
+
+        /*! Texture id */
+        uint32_t m_id {0};
+    };
+
+}//namespace ugly:gl
