@@ -4,6 +4,7 @@
 #include "InputStats.h"
 #include "InputButton.h"
 #include "InputManager.h"
+#include "GuiManager.h"
 #include "Application.h"
 #include "VertexArrays.h"
 #include "VertexBuffer.h"

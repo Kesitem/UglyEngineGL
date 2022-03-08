@@ -3,7 +3,9 @@
 #include "Core.h"
 #include "Application.h"
 #include "InputManager.h"
+#include "GuiManager.h"
 #include "DisplayManager.h"
+
 
 namespace ugly
 {
@@ -20,20 +22,24 @@ public:
     /**
      * \brief Get the instance of the engine.
      */
-    static Engine *const getInstance()
+    static Engine * const getInstance()
     {
         static Engine engine;
         return &engine;
     }
 
     /**
-     * \brief Run the application.
+     * @brief Initialize engine.
+     */
+    void initialize();
+
+    /**
+     * @brief Run the application.
      * Engine take ownership of the application. It will destroy application.
      * 
-     * \param _application  Application to run
-     * \return 0 if ok
+     * @param _application  Application to run
      */
-    int run(Application *_application);
+    void run(std::shared_ptr<Application> _application);
 
     /**
      * \brief Request application to quit.
@@ -64,41 +70,36 @@ public:
 private:
 
     /**
-     * \brief Constructor.
+     * @brief Constructor.
      */
     Engine();
 
     /**
-     * \brief Destructor.
+     * @brief Destructor.
      */
     virtual ~Engine();
 
     /**
-     * \brief Initialize plog.
+     * @brief Initialize plog.
      */
     void initializePLog();
 
     /**
-     * \brief Initialize engine.
-     */
-    void initialize();
-
-    /**
-     * \brief Shutdown engine.
+     * @brief Shutdown engine.
      */
     void shutdown();
 
     /**
-     * \brief Execute main loop.
+     * @brief Execute main loop.
      * 
-     * \return false if error
+     * @return false if error
      */
     void mainLoop();
 
 private:
 
     /*! Application */
-    std::unique_ptr<Application> m_application {nullptr};
+    std::shared_ptr<Application> m_application {nullptr};
 
     /*! GLFW Window */
     GLFWwindow* m_window {nullptr};
@@ -114,6 +115,9 @@ private:
 
     /*! Display manager */
     std::shared_ptr<DisplayManager> m_display_manager{ nullptr };
+
+    /*! GUI manager */
+    std::shared_ptr<GuiManager> m_gui_manager{ nullptr };
 };
 
 }//namespace ugly

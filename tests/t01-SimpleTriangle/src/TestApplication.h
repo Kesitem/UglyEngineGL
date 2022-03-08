@@ -16,21 +16,19 @@ public:
     TestApplication();
 
     /**
-     * @brief Initialize application.
-     * 
-     * @return False if error
-     */
-    bool initialize();
-
-    /**
-     * @brief Shutdown application.
-     */
-    void shutdown();
-
-    /**
      * @brief Update application.
      */
     void update();
+
+    /**
+     * @brief Render application.
+     */
+    void draw();
+
+    /**
+     * @brief Render Gui.
+     */
+    void renderGui();
 
 private:
 
@@ -110,8 +108,8 @@ private:
     std::shared_ptr<ugly::Program> m_shader_program_yellow;
 
     /*! Wireframe flag */
-    bool m_wireframe {false};
+    int m_render_mode{ 1 };
 
     /*! Render type. 0 = triangle, 1 = quad */
-    int m_render_type {0};
+    int m_sample{ 0 };
 };

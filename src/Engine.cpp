@@ -4,52 +4,74 @@
 
 ugly::Engine::Engine()
 {
+    initializePLog();
+
+    auto path = std::filesystem::current_path();
+    LOG_INFO << "Current path: " << path.c_str();
 }
 
 
 ugly::Engine::~Engine()
 {
+    shutdown();
 }
 
-
-int ugly::Engine::run(Application *_application)
+void ugly::Engine::initialize()
 {
-    initializePLog();
+    PLOG_INFO << "--- Initialize engine";
 
-    auto path = std::filesystem::current_path();
-    LOG_INFO << "Current path: " << path.c_str();
-    
-    if(_application == nullptr)
+    if (!glfwInit())
     {
-        LOG_ERROR << "Invalid application";
-        return -1;
+        PLOG_ERROR << "Failed to initialize GLFW";
+        throw new std::runtime_error("Failed to initialize GLFW");
     }
 
-    m_application.reset(_application);
-    LOG_INFO << "Run application: " << m_application->getName();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
+    PLOG_INFO << "Display size: " << m_display_size.x << "*" << m_display_size.y;
+    m_window = glfwCreateWindow(m_display_size.x, m_display_size.y, project::NAME.c_str(), NULL, NULL);
+    if (m_window == nullptr)
+    {
+        PLOG_ERROR << "Failed to create GLFW window";
+        throw new std::runtime_error("Failed to create GLFW window");
+    }
+    glfwMakeContextCurrent(m_window);
+
+    LOG_DEBUG << "creeate display manager";
     try
     {
-        initialize();
+        m_display_manager = std::make_shared<DisplayManager>();
     }
     catch (const std::runtime_error& e)
     {
-        PLOG_ERROR << "Failed to initialize engine. Error: " << e.what();
-        shutdown();
-        return -2;
+        PLOG_ERROR << "Failed to initialize display manager. Error: " << e.what();
+        throw new std::runtime_error("Failed to initialize display manager");
     }
-    catch (...)
+
+    m_display_manager->setViewport(0, 0, m_display_size.x, m_display_size.y);
+
+    m_gui_manager = std::make_shared<GuiManager>(m_window);
+
+    m_input_manager = std::make_shared<InputManager>();
+}
+
+void ugly::Engine::run(std::shared_ptr<Application> _application)
+{
+    LOG_INFO << "Run the engine";
+
+    if (_application.get() == nullptr)
     {
-        PLOG_ERROR << "Failed to initialize engine. Unknown error.";
-        shutdown();
-        return -2;
+        LOG_ERROR << "Invalid application";
+        throw new std::runtime_error("Invalid application");
     }
+
+    m_application = _application;
+    LOG_INFO << "Run application: " << m_application->getName();
 
     mainLoop();
-
-    shutdown();
-
-    return 0;
 }
 
 
@@ -99,50 +121,7 @@ void ugly::Engine::initializePLog()
 }
 
 
-void ugly::Engine::initialize()
-{
-    PLOG_INFO << "--- Initialize engine";
 
-    if(!glfwInit())
-    {
-        PLOG_ERROR << "Failed to initialize GLFW";
-        throw new std::runtime_error("Failed to initialize GLFW");
-    }
-
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
-    PLOG_INFO << "Display size: " << m_display_size.x << "*" << m_display_size.y;
-    m_window = glfwCreateWindow(m_display_size.x, m_display_size.y, m_application->getName().c_str(), NULL, NULL);
-    if(m_window == nullptr)
-    {
-        PLOG_ERROR << "Failed to create GLFW window";
-        throw new std::runtime_error("Failed to create GLFW window");
-    }
-    glfwMakeContextCurrent(m_window);
-
-    try
-    {
-        m_display_manager = std::make_shared<DisplayManager>();
-    }
-    catch (const std::runtime_error& e)
-    {
-        PLOG_ERROR << "Failed to initialize display manager. Error: " << e.what();
-        throw new std::runtime_error("Failed to initialize display manager");
-    }
-
-    m_display_manager->setViewport(0, 0, m_display_size.x, m_display_size.y);
-
-    m_input_manager = std::make_shared<InputManager>();
-
-    if(!m_application->initialize())
-    {
-        LOG_ERROR << "Failed to initialize application";
-        throw new std::runtime_error("Failed to initialize application");
-    }
-}
 
 
 /**
@@ -153,10 +132,10 @@ void ugly::Engine::shutdown()
     PLOG_INFO << "--- Shutdown engine";
 
     if(m_application.get() != nullptr)
-    {
-        m_application->shutdown();
         m_application.reset();
-    }
+
+    if (m_gui_manager.get() != nullptr)
+        m_gui_manager.reset();
 
     if(m_input_manager.get() != nullptr)
         m_input_manager.reset();
@@ -172,13 +151,22 @@ void ugly::Engine::shutdown()
 
 void ugly::Engine::mainLoop()
 {
+    PLOG_INFO << "--- Enter main loop";
+
     while(!m_quit)
     {
         if(glfwWindowShouldClose(m_window))
             m_quit = true;
 
         m_application->update();
+        m_gui_manager->beginFrame();
+        m_application->renderGui();
+        m_gui_manager->endFrame();
+        
         m_input_manager->update();
+        
+        m_application->draw();
+        m_gui_manager->draw();
 
         glfwSwapBuffers(m_window);
         glfwPollEvents();    

@@ -1,47 +1,21 @@
 #include "Application.h"
 #include "Engine.h"
 
-/**
- * \brief Constructor.
- */
+
 ugly::Application::Application()
 {
-}
-
-
-/**
- * \brief Destructor.
- */
-ugly::Application::~Application()
-{
-}
-
-
-/**
- * \brief Initialize application.
- * 
- * \return False if error
- */
-bool ugly::Application::initialize()
-{
+    LOG_INFO << "--- Create application";
     Engine::getInstance()->getInputManager()->createButton("quit");
     Engine::getInstance()->getInputManager()->bindKeyToButton(GLFW_KEY_ESCAPE, "quit");
-
-    return true;
 }
 
 
-/**
- * \brief Shutdown application.
- */
-void ugly::Application::shutdown()
+ugly::Application::~Application()
 {
+    LOG_INFO << "--- Destroy application";
 }
 
 
-/**
- * \brief Update application.
- */
 void ugly::Application::update()
 {
     if(Engine::getInstance()->getInputManager()->getButtonAction("quit") == InputAction::released)
@@ -49,11 +23,21 @@ void ugly::Application::update()
 }
 
 
-/**
- * \brief Get application name.
- * 
- * \return Application name
- */
+void ugly::Application::draw()
+{
+    Engine::getInstance()->getDisplayManager()->setClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    Engine::getInstance()->getDisplayManager()->clear();
+}
+
+
+void ugly::Application::renderGui()
+{
+    ImGui::Begin("Ugly");
+    ImGui::Text("UglyEngine Base application");
+    ImGui::End();
+}
+
+
 const std::string &ugly::Application::getName() const
 {
     return m_name;

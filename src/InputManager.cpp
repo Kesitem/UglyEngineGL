@@ -8,16 +8,56 @@
  */
 void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    static ugly::Engine* engine = ugly::Engine::getInstance();
+    static ImGuiIO& io = ImGui::GetIO();
+    static auto input_manager = ugly::Engine::getInstance()->getInputManager();
 
-    engine->getInputManager()->processKeyChange(key, action);
+    ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
+
+    if(!io.WantCaptureKeyboard)
+        input_manager->processKeyChange(key, action);
+}
+
+
+void glfwCharCallback(GLFWwindow* window, unsigned int codepoint)
+{
+    ImGui_ImplGlfw_CharCallback(window, codepoint);
+}
+
+
+void glfwMouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+{
+    ImGui_ImplGlfw_MouseButtonCallback(window, button, action, mods);
+}
+
+
+void glfwCursorPosCallback(GLFWwindow* window, double xpos, double ypos)
+{
+    ImGui_ImplGlfw_CursorPosCallback(window, xpos, ypos);
+}
+
+
+void glfwCursorEnterCallback(GLFWwindow* window, int entered)
+{
+    ImGui_ImplGlfw_CursorEnterCallback(window, entered);
+}
+
+
+void glfwScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
 }
 
 
 ugly::InputManager::InputManager()
 {
+    auto window = ugly::Engine::getInstance()->getWindow();
     // Register input callbacks
-    glfwSetKeyCallback(ugly::Engine::getInstance()->getWindow(), glfwKeyCallback);
+    glfwSetKeyCallback(window, glfwKeyCallback);
+    glfwSetCharCallback(window, glfwCharCallback);
+    glfwSetMouseButtonCallback(window, glfwMouseButtonCallback);
+    glfwSetCursorPosCallback(window, glfwCursorPosCallback);
+    glfwSetCursorEnterCallback(window, glfwCursorEnterCallback);
+    glfwSetScrollCallback(window, glfwScrollCallback);
 }
 
 

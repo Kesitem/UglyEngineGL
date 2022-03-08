@@ -28,6 +28,11 @@
 // Include stb
 #include "stb_image.h"
 
+// Include imgui
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
 // Constants declaration
 namespace ugly
 {

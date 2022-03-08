@@ -19,6 +19,9 @@ find_package(glm CONFIG REQUIRED)
 # Add stb
 find_path(STB_INCLUDE_DIRS "stb.h")
 
+# Add imgui
+find_package(imgui CONFIG REQUIRED)
+
 # Set sources files path
 set(INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -39,6 +42,7 @@ set(HEADERS
     InputStats.h
     InputButton.h
     InputManager.h
+    GuiManager.h
     DisplayManager.h
     VertexArrays.h
     VertexBuffer.h
@@ -55,6 +59,7 @@ set(SRCS
     Application.cpp
     InputButton.cpp
     InputManager.cpp
+    GuiManager.cpp
     DisplayManager.cpp
     VertexArrays.cpp
     VertexBuffer.cpp
@@ -82,7 +87,7 @@ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 target_include_directories(${PROJECT_NAME} PUBLIC ${PLOG_INCLUDE_DIRS})
 
 # Add library
-target_link_libraries(${PROJECT_NAME} PRIVATE glad::glad glfw glm::glm)
+target_link_libraries(${PROJECT_NAME} PRIVATE glad::glad glfw glm::glm imgui::imgui)
 
 # Set include directory for compilation
 target_include_directories(${PROJECT_NAME} PUBLIC

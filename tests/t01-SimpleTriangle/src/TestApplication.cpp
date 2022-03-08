@@ -32,16 +32,7 @@ const char *fragment_shader_source_yellow = "#version 330 core\n"
 TestApplication::TestApplication()
 {
     this->m_name = ugly::test::APPLICATION_NAME;
-}
 
-
-/**
- * \brief Initialize application.
- * 
- * \return False if error
- */
-bool TestApplication::initialize()
-{
     m_input_manager = ugly::Engine::getInstance()->getInputManager();
     m_display_manager = ugly::Engine::getInstance()->getDisplayManager();
 
@@ -68,19 +59,9 @@ bool TestApplication::initialize()
 
     // Create program
     m_shader_program = std::make_shared<ugly::Program>(vertex_shader, fragment_shader);
- 
+
     // Create yellow
     m_shader_program_yellow = std::make_shared<ugly::Program>(vertex_shader, fragment_shader_yellow);
-
-    return true;
-}
-
-
-/**
- * \brief Shutdown application.
- */
-void TestApplication::shutdown()
-{
 }
 
 
@@ -91,53 +72,89 @@ void TestApplication::update()
 {
     if(ugly::Engine::getInstance()->getInputManager()->getButtonAction("quit") == ugly::InputAction::released)
         ugly::Engine::getInstance()->quit();
-    if(ugly::Engine::getInstance()->getInputManager()->getButtonAction("wireframe") == ugly::InputAction::released)
-        m_wireframe = !m_wireframe;
-    if(ugly::Engine::getInstance()->getInputManager()->getButtonAction("render-type") == ugly::InputAction::released)
-    {
-        m_render_type++;
-        if(m_render_type > 4)
-            m_render_type = 0;
-    }
+ 
+}
 
-        
+void TestApplication::draw()
+{
     m_display_manager->setClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     m_display_manager->clear();
 
-    if (m_wireframe)
-        m_display_manager->setPolygonMode(ugly::DisplayManager::PolygoneMode::LINE);
-    else
-        m_display_manager->setPolygonMode(ugly::DisplayManager::PolygoneMode::FILL);
-
-
-    switch(m_render_type)
+    switch (m_render_mode)
     {
-        case 0:
-        {
-            drawTriangle();
-            break;
-        }
-        case 1:
-        {
-            drawQuad();
-            break;
-        }
-        case 2:
-        {
-            drawTriangles();
-            break;
-        }
-        case 3:
-        {
-            drawTriangles2VA();
-            break;
-        }
-        case 4:
-        {
-            drawTriangles2VA2Programs();
-            break;
-        }
+    case 0:
+        m_display_manager->setPolygonMode(ugly::DisplayManager::PolygoneMode::LINE);
+        break;
+    case 1:
+        m_display_manager->setPolygonMode(ugly::DisplayManager::PolygoneMode::FILL);
+        break;
     }
+
+    switch (m_sample)
+    {
+    case 0:
+    {
+        drawTriangle();
+        break;
+    }
+    case 1:
+    {
+        drawQuad();
+        break;
+    }
+    case 2:
+    {
+        drawTriangles();
+        break;
+    }
+    case 3:
+    {
+        drawTriangles2VA();
+        break;
+    }
+    case 4:
+    {
+        drawTriangles2VA2Programs();
+        break;
+    }
+    }
+}
+
+void TestApplication::renderGui()
+{
+    static std::vector<std::string> sample_list({ "simple triangle", "simple quad", "2 triangles", "2 triangles 2 VA", "2 triangles 2 VA 2 Programs"});
+    ImGui::Begin("Options");   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+    if (ImGui::BeginListBox("Sample"))
+    {
+        for (int n = 0; n < sample_list.size(); n++)
+        {
+            const bool is_selected = (m_sample == n);
+            if (ImGui::Selectable(sample_list[n].c_str(), is_selected))
+                m_sample = n;
+
+            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+            if (is_selected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndListBox();
+    }
+
+    static std::vector<std::string> render_mode_list({ "line", "fill" });
+    if (ImGui::BeginListBox("Render mode"))
+    {
+        for (int n = 0; n < render_mode_list.size(); n++)
+        {
+            const bool is_selected = (m_render_mode == n);
+            if (ImGui::Selectable(render_mode_list[n].c_str(), is_selected))
+                m_render_mode = n;
+
+            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+            if (is_selected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndListBox();
+    }
+    ImGui::End();
 }
 
 

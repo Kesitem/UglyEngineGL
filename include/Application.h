@@ -5,43 +5,41 @@
 namespace ugly
 {
     /**
-     * \brief Base application.
+     * @brief Base application.
      */
     class Application
     {
         public:
 
             /**
-             * \brief Constructor.
+             * @brief Constructor.
              */
             Application();
 
             /**
-             * \brief Destructor.
+             * @brief Destructor.
              */
             virtual ~Application();
 
             /**
-             * \brief Initialize application.
-             * 
-             * \return False if error
-             */
-            virtual bool initialize();
-
-            /**
-             * \brief Shutdown application.
-             */
-            virtual void shutdown();
-
-            /**
-             * \brief Update application.
+             * @brief Update application.
              */
             virtual void update();
 
             /**
-             * \brief Get application name.
+             * @brief Render application.
+             */
+            virtual void draw();
+
+            /**
+             * @brief Render Gui.
+             */
+            virtual void renderGui();
+
+            /**
+             * @brief Get application name.
              * 
-             * \return Application name
+             * @return Application name
              */
             const std::string &getName() const;
 
