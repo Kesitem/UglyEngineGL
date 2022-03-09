@@ -39,6 +39,7 @@ set(HEADERS
     Core.h
     Engine.h
     Application.h
+    Task.h
     InputStats.h
     InputButton.h
     InputManager.h
@@ -57,6 +58,7 @@ set(SRCS
     LogFormatter.cpp
     Engine.cpp
     Application.cpp
+    task.cpp
     InputButton.cpp
     InputManager.cpp
     GuiManager.cpp

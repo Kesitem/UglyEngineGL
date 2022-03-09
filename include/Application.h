@@ -27,14 +27,14 @@ namespace ugly
             virtual void update();
 
             /**
+             * @brief Update Gui.
+             */
+            virtual void updateGui();
+
+            /**
              * @brief Render application.
              */
             virtual void draw();
-
-            /**
-             * @brief Render Gui.
-             */
-            virtual void renderGui();
 
             /**
              * @brief Get application name.

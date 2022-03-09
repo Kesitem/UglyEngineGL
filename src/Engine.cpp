@@ -160,7 +160,7 @@ void ugly::Engine::mainLoop()
 
         m_application->update();
         m_gui_manager->beginFrame();
-        m_application->renderGui();
+        m_application->updateGui();
         m_gui_manager->endFrame();
         
         m_input_manager->update();

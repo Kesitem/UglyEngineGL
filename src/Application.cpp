@@ -30,7 +30,7 @@ void ugly::Application::draw()
 }
 
 
-void ugly::Application::renderGui()
+void ugly::Application::updateGui()
 {
     ImGui::Begin("Ugly");
     ImGui::Text("UglyEngine Base application");
