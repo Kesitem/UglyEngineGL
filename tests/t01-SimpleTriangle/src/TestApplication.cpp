@@ -1,41 +1,17 @@
 #include "TestApplication.h"
 #include "config.h"
 
-/** Vertex shader source **/
-const char *vertex_shader_source = "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "}\0";
 
-/** Fragment shader source **/
-const char *fragment_shader_source = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-    "}\0";
-
-/** Fragment shader source **/
-const char *fragment_shader_source_yellow = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vec4(1.0f, 1.0f, 0.0f, 1.0f);\n"
-    "}\0";
-
-
-/**
- * @brief Constructor.
- */
-TestApplication::TestApplication()
+TestApplication::TestApplication() : ugly::Application()
 {
-    this->m_name = ugly::test::APPLICATION_NAME;
+    this->m_title = ugly::test::APPLICATION_NAME;
 
-    m_input_manager = ugly::Engine::getInstance()->getInputManager();
-    m_display_manager = ugly::Engine::getInstance()->getDisplayManager();
 
+}
+
+
+void TestApplication::initialize()
+{
     m_input_manager->createButton("quit");
     m_input_manager->bindKeyToButton(GLFW_KEY_ESCAPE, "quit");
     m_input_manager->createButton("wireframe");
@@ -43,42 +19,48 @@ TestApplication::TestApplication()
     m_input_manager->createButton("render-type");
     m_input_manager->bindKeyToButton(GLFW_KEY_R, "render-type");
 
-    createTriangle();
-    createQuad();
-    createTriangles();
-    createTriangles2VA();
-
-    // Create vertex shader
-    auto vertex_shader = std::make_shared<ugly::Shader>(ugly::ShaderType::VERTEX, vertex_shader_source);
-
-    // Create fragment shader
-    auto fragment_shader = std::make_shared<ugly::Shader>(ugly::ShaderType::FRAGMENT, fragment_shader_source);
-
-    // Create fragment shader yellow
-    auto fragment_shader_yellow = std::make_shared< ugly::Shader>(ugly::ShaderType::FRAGMENT, fragment_shader_source_yellow);
-
-    // Create program
-    m_shader_program = std::make_shared<ugly::Program>(vertex_shader, fragment_shader);
-
-    // Create yellow
-    m_shader_program_yellow = std::make_shared<ugly::Program>(vertex_shader, fragment_shader_yellow);
+    m_simple_triangle_task = std::make_shared<SimpleTriangleTask>();
+    m_simple_quad_task = std::make_shared<SimpleQuadTask>();
+    m_simple_2_triangles_task = std::make_shared<Simple2TrianglesTask>();
+    m_simple_2_triangles_2va_task = std::make_shared<Simple2Triangles2VATask>();
+    m_simple_2_triangles_2va_2program_task = std::make_shared<Simple2Triangles2VA2ProgramTask>();
 }
 
 
-/**
- * @brief Update application.
- */
+void TestApplication::shutdown()
+{
+    if (m_simple_triangle_task.get() != nullptr)
+    {
+        m_simple_triangle_task->shutdown();
+        m_simple_triangle_task.reset();
+    }
+    if (m_simple_quad_task.get() != nullptr)
+    {
+        m_simple_quad_task->shutdown();
+        m_simple_quad_task.reset();
+    }
+    if (m_simple_2_triangles_task.get() != nullptr)
+    {
+        m_simple_2_triangles_task->shutdown();
+        m_simple_2_triangles_task.reset();
+    }
+    if (m_simple_2_triangles_2va_task.get() != nullptr)
+    {
+        m_simple_2_triangles_2va_task->shutdown();
+        m_simple_2_triangles_2va_task.reset();
+    }
+    if (m_simple_2_triangles_2va_2program_task.get() != nullptr)
+    {
+        m_simple_2_triangles_2va_2program_task->shutdown();
+        m_simple_2_triangles_2va_2program_task.reset();
+    }
+}
+
+
 void TestApplication::update()
 {
     if(ugly::Engine::getInstance()->getInputManager()->getButtonAction("quit") == ugly::InputAction::released)
         ugly::Engine::getInstance()->quit();
- 
-}
-
-void TestApplication::draw()
-{
-    m_display_manager->setClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    m_display_manager->clear();
 
     switch (m_render_mode)
     {
@@ -94,33 +76,95 @@ void TestApplication::draw()
     {
     case 0:
     {
-        drawTriangle();
+        if (m_current_task.get() != (Task*)m_simple_triangle_task.get())
+        {
+            if (m_current_task.get() != nullptr)
+            {
+                m_task_manager->popTask(m_current_task);
+                m_current_task->shutdown();
+            }
+
+            m_current_task = std::static_pointer_cast<Task>(m_simple_triangle_task);
+            m_simple_triangle_task->initialize();
+            m_task_manager->pushTask(m_simple_triangle_task);
+        }
         break;
     }
     case 1:
     {
-        drawQuad();
+        if (m_current_task.get() != (Task*)m_simple_quad_task.get())
+        {
+            if (m_current_task.get() != nullptr)
+            {
+                m_task_manager->popTask(m_current_task);
+                m_current_task->shutdown();
+            }
+
+            m_current_task = std::static_pointer_cast<Task>(m_simple_quad_task);
+            m_simple_quad_task->initialize();
+            m_task_manager->pushTask(m_simple_quad_task);
+        }
         break;
     }
     case 2:
     {
-        drawTriangles();
+        if (m_current_task.get() != (Task*)m_simple_2_triangles_task.get())
+        {
+            if (m_current_task.get() != nullptr)
+            {
+                m_task_manager->popTask(m_current_task);
+                m_current_task->shutdown();
+            }
+
+            m_current_task = std::static_pointer_cast<Task>(m_simple_2_triangles_task);
+            m_simple_2_triangles_task->initialize();
+            m_task_manager->pushTask(m_simple_2_triangles_task);
+        }
         break;
     }
     case 3:
     {
-        drawTriangles2VA();
+        if (m_current_task.get() != (Task*)m_simple_2_triangles_2va_task.get())
+        {
+            if (m_current_task.get() != nullptr)
+            {
+                m_task_manager->popTask(m_current_task);
+                m_current_task->shutdown();
+            }
+
+            m_current_task = std::static_pointer_cast<Task>(m_simple_2_triangles_2va_task);
+            m_simple_2_triangles_2va_task->initialize();
+            m_task_manager->pushTask(m_simple_2_triangles_2va_task);
+        }
         break;
     }
     case 4:
     {
-        drawTriangles2VA2Programs();
+        if (m_current_task.get() != (Task*)m_simple_2_triangles_2va_2program_task.get())
+        {
+            if (m_current_task.get() != nullptr)
+            {
+                m_task_manager->popTask(m_current_task);
+                m_current_task->shutdown();
+            }
+
+            m_current_task = std::static_pointer_cast<Task>(m_simple_2_triangles_2va_2program_task);
+            m_simple_2_triangles_2va_2program_task->initialize();
+            m_task_manager->pushTask(m_simple_2_triangles_2va_2program_task);
+        }
         break;
     }
     }
+ 
 }
 
-void TestApplication::renderGui()
+void TestApplication::render()
+{
+    m_display_manager->setClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    m_display_manager->clear();
+}
+
+void TestApplication::updateGui()
 {
     static std::vector<std::string> sample_list({ "simple triangle", "simple quad", "2 triangles", "2 triangles 2 VA", "2 triangles 2 VA 2 Programs"});
     ImGui::Begin("Options");   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
@@ -155,208 +199,4 @@ void TestApplication::renderGui()
         ImGui::EndListBox();
     }
     ImGui::End();
-}
-
-
-/**
- * @brief Create triangle data.
- */
-void TestApplication::createTriangle()
-{
-    float vertices[] = 
-    {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f,  0.5f, 0.0f
-    };  
-
-    // Create and bind vertex array
-    m_triangle_va = std::make_shared<ugly::VertexArrays>();
-
-    // Create vertex buffer
-    
-    m_triangle_bo = std::make_shared<ugly::VertexBuffer>(sizeof(vertices), vertices);
-    m_triangle_bo->setLayout(
-        std::make_shared<ugly::BufferLayout>(std::initializer_list<ugly::BufferElement>{
-            ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false) }));
-
-    // Set vertex pointer
-    m_triangle_va->addVertexBuffer(m_triangle_bo);
-
-    // Unbind vertex array
-    m_triangle_va->unbind();
-}
-
-
-void TestApplication::drawTriangle()
-{
-    m_shader_program->use();
-    m_triangle_va->bind();
-    m_display_manager->drawArrays(3, 0);
-    m_triangle_va->unbind();
-}
-
-
-void TestApplication::createQuad()
-{
-    float vertices[] = 
-    {
-        0.5f,  0.5f, 0.0f,  // top right
-        0.5f, -0.5f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  // bottom left
-        -0.5f,  0.5f, 0.0f   // top left 
-    };
-    uint32_t indices[] = 
-    {  // note that we start from 0!
-        0, 1, 3,   // first triangle
-        1, 2, 3    // second triangle
-    };
-
-    // Create and bind vertex array
-    m_quad_va = std::make_shared<ugly::VertexArrays>();
-
-    // Create vertex buffer and bind vertex buffer
-    auto quad_bo = std::make_shared<ugly::VertexBuffer>(sizeof(vertices), vertices);
-    quad_bo->setLayout(
-        std::make_shared<ugly::BufferLayout>(
-            std::initializer_list<ugly::BufferElement>{ 
-                ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false) }));
- 
-    // Set vertex pointer
-    m_quad_va->addVertexBuffer(quad_bo);
-
-    // Create element buffer
-    auto quad_eb = std::make_shared<ugly::IndexBuffer>(sizeof(indices), indices);
-    m_quad_va->setIndexBuffer(quad_eb);
-
-    // Unbind vertex array
-    m_quad_va->unbind();
-}
-
-
-void TestApplication::drawQuad()
-{
-    m_shader_program->use();
-    m_quad_va->bind();
-    m_display_manager->drawElements(6);
-    m_quad_va->unbind();
-
-}
-
-
-void TestApplication::createTriangles()
-{
-    float vertices[] = 
-    {
-        -0.75f, -0.5f, 0.0f,
-        -0.25f, -0.5f, 0.0f,
-        -0.5f,  0.5f, 0.0f,
-        0.25f, -0.5f, 0.0f,
-        0.75f, -0.5f, 0.0f,
-        0.5f,  0.5f, 0.0f,
-    };  
-
-    // Create and bind vertex array
-    m_triangles_va = std::make_shared<ugly::VertexArrays>();
-
-    // Create vertex buffer
-    auto triangles_bo = std::make_shared<ugly::VertexBuffer>(sizeof(vertices), vertices);
-    triangles_bo->setLayout(
-        std::make_shared<ugly::BufferLayout>(
-            std::initializer_list<ugly::BufferElement>{ ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false) }));
-
-    // Set vertex pointer
-    m_triangles_va->addVertexBuffer(triangles_bo);
-
-    // Unbind vertex array
-    m_triangles_va->unbind(); 
-}
-
-
-void TestApplication::drawTriangles()
-{
-    m_shader_program->use();
-    m_triangles_va->bind();
-    m_display_manager->drawArrays(6);
-    m_triangles_va->unbind();
-}
-
-
-/**
- * @brief Create triangles data.
- */
-void TestApplication::createTriangles2VA()
-{
-    float vertices0[] = 
-    {
-        -0.75f, -0.5f, 0.0f,
-        -0.25f, -0.5f, 0.0f,
-        -0.5f,  0.5f, 0.0f
-    };
-
-    // Create and bind vertex array
-    m_triangles_20_va = std::make_shared<ugly::VertexArrays>();
-
-    // Create vertex buffer
-    auto triangles_20_bo = std::make_shared<ugly::VertexBuffer>(sizeof(vertices0), vertices0);
-    triangles_20_bo->setLayout(
-        std::make_shared<ugly::BufferLayout>(
-            std::initializer_list<ugly::BufferElement>{ ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false) }));
-    
-    // Set vertex pointer
-    m_triangles_20_va->addVertexBuffer(triangles_20_bo);
-
-    // Unbind vertex array
-    m_triangles_20_va->unbind(); 
-
-    float vertices1[] = 
-    {
-        0.25f, -0.5f, 0.0f,
-        0.75f, -0.5f, 0.0f,
-        0.5f,  0.5f, 0.0f
-    };   
-
-    // Create and bind vertex array
-    m_triangles_21_va = std::make_shared<ugly::VertexArrays>();
-
-    // Create vertex buffer
-    auto triangles_21_bo = std::make_shared<ugly::VertexBuffer>(sizeof(vertices1), vertices1);
-    triangles_21_bo->setLayout(
-        std::make_shared<ugly::BufferLayout>(
-            std::initializer_list{ ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false) }));
-
-    // Set vertex pointer
-    m_triangles_21_va->addVertexBuffer(triangles_21_bo);
-
-    // Unbind vertex array
-    m_triangles_21_va->unbind();
-}    
-
-
-void TestApplication::drawTriangles2VA()
-{
-    m_shader_program->use();
-    m_triangles_20_va->bind();
-    m_display_manager->drawArrays(3);
-    m_triangles_20_va->unbind();
-    m_triangles_21_va->bind();
-    m_display_manager->drawArrays(3);
-    m_triangles_21_va->unbind();
-}
-
-
-/**
- * @brief Draw triangles.
- */
-void TestApplication::drawTriangles2VA2Programs()
-{
-    m_shader_program->use();
-    m_triangles_20_va->bind();
-    m_display_manager->drawArrays(3);
-    m_triangles_20_va->unbind();
-
-    m_shader_program_yellow->use();
-    m_triangles_21_va->bind();
-    m_display_manager->drawArrays(3);
-    m_triangles_21_va->unbind();
 }

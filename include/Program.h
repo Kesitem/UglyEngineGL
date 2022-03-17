@@ -22,6 +22,14 @@ namespace ugly
         Program(std::shared_ptr<Shader> _vertex_shader, std::shared_ptr<Shader> _fragment_shader);
 
         /**
+         * @brief Constructor from shader source code.
+         *
+         * @param _vertex_shader_source    Vertex shader code
+         * @param _fragment_shader_source  Program shader code
+         */
+        Program(const char* _vertex_shader_source, const char* _fragment_shader_source);
+
+        /**
          * @brief Constructor from path to shader files.
          *
          * @param _vertex_shader_path    Vertex shader path

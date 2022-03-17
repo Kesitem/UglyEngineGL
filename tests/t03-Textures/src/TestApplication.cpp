@@ -3,7 +3,7 @@
 
 TestApplication::TestApplication()
 {
-    this->m_name = ugly::test::APPLICATION_NAME;
+    this->m_title = ugly::test::APPLICATION_NAME;
 }
 
 

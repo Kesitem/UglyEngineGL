@@ -2,6 +2,7 @@
 
 #include "Core.h"
 #include "Application.h"
+#include "TaskManager.h"
 #include "InputManager.h"
 #include "GuiManager.h"
 #include "DisplayManager.h"
@@ -61,6 +62,13 @@ public:
     std::shared_ptr<InputManager> getInputManager() const;
 
     /**
+     * \brief Get task manager.
+     *
+     * \return Task manager
+     */
+    std::shared_ptr<TaskManager> getTaskManager() const;
+
+    /**
      * \brief Get GLFW window.
      *
      * \return GLFW window.
@@ -98,9 +106,6 @@ private:
 
 private:
 
-    /*! Application */
-    std::shared_ptr<Application> m_application {nullptr};
-
     /*! GLFW Window */
     GLFWwindow* m_window {nullptr};
 
@@ -118,6 +123,12 @@ private:
 
     /*! GUI manager */
     std::shared_ptr<GuiManager> m_gui_manager{ nullptr };
+
+    /*! Task manager */
+    std::shared_ptr<TaskManager> m_task_manager{ nullptr };
+
+    /*! Application */
+    std::shared_ptr<Application> m_application{ nullptr };
 };
 
 }//namespace ugly

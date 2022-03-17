@@ -1,6 +1,11 @@
 #pragma once
 
 #include "UglyEngine.h"
+#include "SimpleTriangleTask.h"
+#include "SimpleQuadTask.h"
+#include "Simple2TrianglesTask.h"
+#include "Simple2Triangles2VATask.h"
+#include "Simple2Triangles2VA2ProgramTask.h"
 
 /**
  * @brief Test application.
@@ -16,100 +21,47 @@ public:
     TestApplication();
 
     /**
-     * @brief Update application.
+     * @brief Initialize application.
      */
-    void update();
+    void initialize() override;
 
     /**
-     * @brief Render application.
+     * @brief Shutdown application.
      */
-    void draw();
+    void shutdown() override;
+
+    /**
+     * @brief Update application.
+     */
+    void update() override;
 
     /**
      * @brief Render Gui.
      */
-    void renderGui();
+    void updateGui() override;
+
+    /**
+     * @brief Render application.
+     */
+    void render() override;
 
 private:
-
-    /**
-     * @brief Create triangle data.
-     */
-    void createTriangle();
-
-    /**
-     * @brief Draw triangle.
-     */
-    void drawTriangle();
-
-    /**
-     * @brief Create quad data.
-     */
-    void createQuad();
-
-    /**
-     * @brief Draw quad.
-     */
-    void drawQuad();
-
-    /**
-     * @brief Create triangles data.
-     */
-    void createTriangles();
-
-    /**
-     * @brief Draw triangles.
-     */
-    void drawTriangles();
-
-    /**
-     * @brief Create triangles data.
-     */
-    void createTriangles2VA();
-
-    /**
-     * @brief Draw triangles.
-     */
-    void drawTriangles2VA();
-
-    /**
-     * @brief Draw triangles.
-     */
-    void drawTriangles2VA2Programs();
-
-private:
-
-    /*! Input manager */
-    std::shared_ptr<ugly::InputManager> m_input_manager {nullptr};
-
-    /*! Display manager */
-    std::shared_ptr<ugly::DisplayManager> m_display_manager{ nullptr };
-
-    /*! Triangle VAO */
-    std::shared_ptr<ugly::VertexArrays> m_triangle_va;
-
-    /*! Triangle VAO */
-    std::shared_ptr<ugly::VertexArrays> m_triangles_va;
-
-    /*! Quad VAO */
-    std::shared_ptr<ugly::VertexArrays> m_quad_va;
-
-    std::shared_ptr<ugly::VertexArrays> m_triangles_20_va;
-
-    std::shared_ptr<ugly::VertexArrays> m_triangles_21_va;
-
-    /*! Triangle VBO */
-    std::shared_ptr<ugly::VertexBuffer> m_triangle_bo;
-
-    /*! Program */
-    std::shared_ptr<ugly::Program> m_shader_program;
-
-    /*! Program yellow */
-    std::shared_ptr<ugly::Program> m_shader_program_yellow;
 
     /*! Wireframe flag */
     int m_render_mode{ 1 };
 
-    /*! Render type. 0 = triangle, 1 = quad */
+    /*! Render type. 0 = triangle, 1 = quad, etc ...*/
     int m_sample{ 0 };
+
+    std::shared_ptr<Task> m_current_task{ nullptr };
+
+    std::shared_ptr<SimpleTriangleTask> m_simple_triangle_task{ nullptr };
+
+    std::shared_ptr<SimpleQuadTask> m_simple_quad_task{ nullptr };
+
+    std::shared_ptr<Simple2TrianglesTask> m_simple_2_triangles_task{ nullptr };
+
+    std::shared_ptr<Simple2Triangles2VATask> m_simple_2_triangles_2va_task{ nullptr };
+
+    std::shared_ptr<Simple2Triangles2VA2ProgramTask> m_simple_2_triangles_2va_2program_task{ nullptr };
 };

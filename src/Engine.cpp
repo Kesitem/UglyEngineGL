@@ -16,6 +16,7 @@ ugly::Engine::~Engine()
     shutdown();
 }
 
+
 void ugly::Engine::initialize()
 {
     PLOG_INFO << "--- Initialize engine";
@@ -56,7 +57,10 @@ void ugly::Engine::initialize()
     m_gui_manager = std::make_shared<GuiManager>(m_window);
 
     m_input_manager = std::make_shared<InputManager>();
+
+    m_task_manager = std::make_shared<TaskManager>();
 }
+
 
 void ugly::Engine::run(std::shared_ptr<Application> _application)
 {
@@ -69,7 +73,9 @@ void ugly::Engine::run(std::shared_ptr<Application> _application)
     }
 
     m_application = _application;
-    LOG_INFO << "Run application: " << m_application->getName();
+    LOG_INFO << "Run application: " << m_application->getTitle();
+    m_application->initialize();
+    m_task_manager->pushTask(m_application);
 
     mainLoop();
 }
@@ -87,10 +93,17 @@ std::shared_ptr<ugly::InputManager> ugly::Engine::getInputManager() const
 }
 
 
+std::shared_ptr<ugly::TaskManager> ugly::Engine::getTaskManager() const
+{
+    return m_task_manager;
+}
+
+
 std::shared_ptr<ugly::DisplayManager> ugly::Engine::getDisplayManager() const
 {
     return m_display_manager;
 }
+
 
 GLFWwindow* ugly::Engine::getWindow() const
 {
@@ -121,18 +134,18 @@ void ugly::Engine::initializePLog()
 }
 
 
-
-
-
-/**
- * \breif Shutdown engine.
- */
 void ugly::Engine::shutdown()
 {
     PLOG_INFO << "--- Shutdown engine";
 
-    if(m_application.get() != nullptr)
+    if (m_application.get() != nullptr)
+    {
+        m_application->shutdown();
         m_application.reset();
+    }
+   
+    if (m_task_manager.get() != nullptr)
+        m_task_manager.reset();
 
     if (m_gui_manager.get() != nullptr)
         m_gui_manager.reset();
@@ -158,14 +171,14 @@ void ugly::Engine::mainLoop()
         if(glfwWindowShouldClose(m_window))
             m_quit = true;
 
-        m_application->update();
+        m_task_manager->update();
         m_gui_manager->beginFrame();
-        m_application->updateGui();
+        m_task_manager->updateGui();
         m_gui_manager->endFrame();
         
         m_input_manager->update();
         
-        m_application->draw();
+        m_task_manager->render();
         m_gui_manager->draw();
 
         glfwSwapBuffers(m_window);

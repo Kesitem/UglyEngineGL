@@ -15,8 +15,18 @@ configure_file (
 # List of source files
 set(SRCS
     config.h
+    SimpleTriangleTask.h
+    SimpleTriangleTask.cpp
+    SimpleQuadTask.h
+    SimpleQuadTask.cpp
     TestApplication.h
     TestApplication.cpp
+    Simple2TrianglesTask.h
+    Simple2TrianglesTask.cpp
+    Simple2Triangles2VATask.h
+    Simple2Triangles2VATask.cpp
+    Simple2Triangles2VA2ProgramTask.h
+    Simple2Triangles2VA2ProgramTask.cpp
     main.cpp
 )
 # Generate filename with path

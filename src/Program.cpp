@@ -21,6 +21,11 @@ ugly::Program::Program(std::shared_ptr<Shader> _vertex_shader, std::shared_ptr<S
     }
 }
 
+ugly::Program::Program(const char* _vertex_shader_source, const char* _fragment_shader_source): Program(
+    std::make_shared<Shader>(ShaderType::VERTEX, _vertex_shader_source), std::make_shared<Shader>(ShaderType::FRAGMENT, _fragment_shader_source))
+{
+}
+
 
 ugly::Program::Program(const std::filesystem::path& _vertex_sharder_path,
     const std::filesystem::path& _fragment_shader_path) : Program(

@@ -112,8 +112,7 @@ void ugly::DisplayManager::setClearColor(float _red, float _green, float _blue, 
 
 void ugly::DisplayManager::clear()
 {
-    //glClear(GL_COLOR_BUFFER_BIT);
-    glClear(GL_FRONT_AND_BACK);
+    glClear(GL_COLOR_BUFFER_BIT);
 }
 
 

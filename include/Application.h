@@ -1,13 +1,17 @@
 #pragma once
 
 #include "core.h"
+#include "Task.h"
+#include "TaskManager.h"
+#include "DisplayManager.h"
+#include "InputManager.h"
 
 namespace ugly
 {
     /**
      * @brief Base application.
      */
-    class Application
+    class Application : public Task
     {
         public:
 
@@ -22,6 +26,16 @@ namespace ugly
             virtual ~Application();
 
             /**
+             * @brief Initialize application.
+             */
+            virtual void initialize();
+
+            /**
+             * @brief Shutdown application.
+             */
+            virtual void shutdown();
+
+            /**
              * @brief Update application.
              */
             virtual void update();
@@ -34,19 +48,28 @@ namespace ugly
             /**
              * @brief Render application.
              */
-            virtual void draw();
+            virtual void render();
 
             /**
-             * @brief Get application name.
+             * @brief Get application title.
              * 
-             * @return Application name
+             * @return Application title
              */
-            const std::string &getName() const;
+            const std::string &getTitle() const;
 
         protected:
 
             /*! Application name */
-            std::string m_name {"UglyBaseApplication"};
+            std::string m_title {"UglyBaseApplication"};
+
+            /*! Reference to the engine */
+            std::shared_ptr<TaskManager> m_task_manager;
+
+            /*! Input manager */
+            std::shared_ptr<ugly::InputManager> m_input_manager{ nullptr };
+
+            /*! Display manager */
+            std::shared_ptr<ugly::DisplayManager> m_display_manager{ nullptr };
     };
 
 }//namespace ugly
