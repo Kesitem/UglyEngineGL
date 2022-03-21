@@ -56,13 +56,18 @@ void OffsetTask::update()
 
 void OffsetTask::updateGui()
 {
+    ImGui::Begin("Set offest");
+    {
+        ImGui::DragFloat("offset", &m_offset, 0.01f, 0.0f, 1.0f, "%.06f ns");
+    }
+    ImGui::End();
 }
 
 
 void OffsetTask::render()
 {
     m_program->use();
-    m_program->setUniform("u_offset", 0.5f);
+    m_program->setUniform("u_offset", m_offset);
     m_va->bind();
     m_display_manager->drawArrays(3, 0);
     m_va->unbind();

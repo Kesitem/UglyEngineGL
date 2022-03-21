@@ -44,4 +44,6 @@ private:
 	std::shared_ptr<ugly::VertexArrays> m_va{ nullptr };
 
 	std::shared_ptr<ugly::Program> m_program{ nullptr };
+
+	float m_offset{ 0.5f };
 };
