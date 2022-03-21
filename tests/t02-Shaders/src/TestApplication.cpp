@@ -2,75 +2,58 @@
 #include "config.h"
 
 
-TestApplication::TestApplication()
+TestApplication::TestApplication() : ugly::Application()
 {
     this->m_title = ugly::test::APPLICATION_NAME;
 }
 
 
-bool TestApplication::initialize()
+void TestApplication::initialize()
 {
-    m_input_manager = ugly::Engine::getInstance()->getInputManager();
-    m_display_manager = ugly::Engine::getInstance()->getDisplayManager();
-
     m_input_manager->createButton("quit");
     m_input_manager->bindKeyToButton(GLFW_KEY_ESCAPE, "quit");
-    m_input_manager->createButton("wireframe");
-    m_input_manager->bindKeyToButton(GLFW_KEY_W, "wireframe");
-    m_input_manager->createButton("render-type");
-    m_input_manager->bindKeyToButton(GLFW_KEY_R, "render-type");
 
-    float vertices[] =
-    {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f,  0.5f, 0.0f
-    };
-
-    // Create and bind vertex array
-    m_triangle_va = std::make_shared<ugly::VertexArrays>();
-
-    // Create vertex buffer
-    auto triangle_bo = std::make_shared<ugly::VertexBuffer>(sizeof(vertices), vertices);
-    triangle_bo->setLayout(std::make_shared<ugly::BufferLayout>(
-        std::initializer_list<ugly::BufferElement>{ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false)}));
-    // Set vertex pointer
-    m_triangle_va->addVertexBuffer(triangle_bo);
-
-    // Unbind vertex array
-    m_triangle_va->unbind();
-
-    float color_vertices[] = {
-        // positions         // colors
-         0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // bottom right
-        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // bottom left
-         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // top 
-    };
-
-    m_color_triangle_va = std::make_shared<ugly::VertexArrays>();
-
-    // Create vertex buffer
-    auto color_triangle_bo = std::make_shared<ugly::VertexBuffer>(sizeof(color_vertices), color_vertices);
-    color_triangle_bo->setLayout(std::make_shared<ugly::BufferLayout>(
-        std::initializer_list<ugly::BufferElement>{
-            ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false),
-            ugly::BufferElement("a_color", ugly::BufferDataType::FLOAT3, false)}));
-    // Set vertex pointer
-    m_color_triangle_va->addVertexBuffer(color_triangle_bo);
-
-    // Create program
-    m_shader_program_red = std::make_shared<ugly::Program>("./data/simple_red.vert", "./data/simple_red.frag");
-    m_shader_program_uniform = std::make_shared<ugly::Program>("./data/simple_uniform.vert", "./data/simple_uniform.frag");
-    m_shader_program_color = std::make_shared<ugly::Program>("./data/simple_color.vert", "./data/simple_color.frag");
-    m_shader_program_color_inverted = std::make_shared<ugly::Program>("./data/simple_color_inverted.vert", "./data/simple_color.frag");
-    m_shader_program_color_offset = std::make_shared<ugly::Program>("./data/simple_color_offset.vert", "./data/simple_color.frag");
-    m_shader_program_color_pos = std::make_shared<ugly::Program>("./data/simple_color_pos.vert", "./data/simple_color.frag");
-    return true;
+    m_simple_triangle_task = std::make_shared<SimpleTriangleTask>();
+    m_uniform_task = std::make_shared<UniformTask>();
+    m_more_attributes_task = std::make_shared<MoreAttributesTask>();
+    m_upside_down_task = std::make_shared<UpsideDownTask>();
+    m_offset_task = std::make_shared<OffsetTask>();
+    m_pos_as_color_task = std::make_shared<PosAsColorTask>();
 }
 
 
 void TestApplication::shutdown()
 {
+    if (m_simple_triangle_task.get() != nullptr)
+    {
+        m_simple_triangle_task->shutdown();
+        m_simple_triangle_task.reset();
+    }
+    if (m_uniform_task.get() != nullptr)
+    {
+        m_uniform_task->shutdown();
+        m_uniform_task.reset();
+    }
+    if (m_more_attributes_task.get() != nullptr)
+    {
+        m_more_attributes_task->shutdown();
+        m_more_attributes_task.reset();
+    }
+    if (m_upside_down_task.get() != nullptr)
+    {
+        m_upside_down_task->shutdown();
+        m_upside_down_task.reset();
+    }
+    if (m_offset_task.get() != nullptr)
+    {
+        m_offset_task->shutdown();
+        m_offset_task.reset();
+    }
+    if (m_pos_as_color_task.get() != nullptr)
+    {
+        m_pos_as_color_task->shutdown();
+        m_pos_as_color_task.reset();
+    }
 }
 
 
@@ -78,68 +61,144 @@ void TestApplication::update()
 {
     if(m_input_manager->getButtonAction("quit") == ugly::InputAction::released)
         ugly::Engine::getInstance()->quit();
-    if(m_input_manager->getButtonAction("wireframe") == ugly::InputAction::released)
-        m_wireframe = !m_wireframe;
-    if (ugly::Engine::getInstance()->getInputManager()->getButtonAction("render-type") == ugly::InputAction::released)
-    {
-        m_render_type++;
-        if (m_render_type > 5)
-            m_render_type = 0;
-    }
-        
-    m_display_manager->setClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    m_display_manager->clear();
 
-    if(m_wireframe)
+    if(m_render_mode)
         m_display_manager->setPolygonMode(ugly::DisplayManager::PolygoneMode::LINE);
     else
         m_display_manager->setPolygonMode(ugly::DisplayManager::PolygoneMode::FILL);
 
-    // Update timer
-    float time_value = (float)glfwGetTime();
-    float green_value = (sin(time_value) / 2.0f) + 0.5f;
-
     // Draw simple red triangle
-    switch (m_render_type)
+    switch (m_sample)
     {
     case 0:
-        m_shader_program_red->use();
-        m_triangle_va->bind();
-        m_display_manager->drawArrays(3);
-        m_triangle_va->unbind();
+        if (m_current_task.get() != (Task*)m_simple_triangle_task.get())
+        {
+            if (m_current_task.get() != nullptr)
+            {
+                m_task_manager->popTask(m_current_task);
+                m_current_task->shutdown();
+            }
+
+            m_current_task = std::static_pointer_cast<Task>(m_simple_triangle_task);
+            m_simple_triangle_task->initialize();
+            m_task_manager->pushTask(m_simple_triangle_task);
+        }
         break;
     case 1:
-        m_shader_program_uniform->use();
-        m_shader_program_uniform->setUniform("ourColor", glm::vec4(0.0f, green_value, 0.0f, 1.0f));
-        m_triangle_va->bind();
-        m_display_manager->drawArrays(3);
-        m_triangle_va->unbind();
+        if (m_current_task.get() != (Task*)m_uniform_task.get())
+        {
+            if (m_current_task.get() != nullptr)
+            {
+                m_task_manager->popTask(m_current_task);
+                m_current_task->shutdown();
+            }
+
+            m_current_task = std::static_pointer_cast<Task>(m_uniform_task);
+            m_uniform_task->initialize();
+            m_task_manager->pushTask(m_uniform_task);
+        }
         break;
     case 2:
-        m_shader_program_color->use();
-        m_color_triangle_va->bind();
-        m_display_manager->drawArrays(3);
-        m_color_triangle_va->unbind();
+        if (m_current_task.get() != (Task*)m_more_attributes_task.get())
+        {
+            if (m_current_task.get() != nullptr)
+            {
+                m_task_manager->popTask(m_current_task);
+                m_current_task->shutdown();
+            }
+
+            m_current_task = std::static_pointer_cast<Task>(m_more_attributes_task);
+            m_more_attributes_task->initialize();
+            m_task_manager->pushTask(m_more_attributes_task);
+        }
         break;
     case 3:
-        m_shader_program_color_inverted->use();
-        m_color_triangle_va->bind();
-        m_display_manager->drawArrays(3);
-        m_color_triangle_va->unbind();
+        if (m_current_task.get() != (Task*)m_upside_down_task.get())
+        {
+            if (m_current_task.get() != nullptr)
+            {
+                m_task_manager->popTask(m_current_task);
+                m_current_task->shutdown();
+            }
+
+            m_current_task = std::static_pointer_cast<Task>(m_upside_down_task);
+            m_upside_down_task->initialize();
+            m_task_manager->pushTask(m_upside_down_task);
+        }
         break;
     case 4:
-        m_shader_program_color_offset->use();
-        m_shader_program_color_offset->setUniform("u_offset", 0.5f);
-        m_color_triangle_va->bind();
-        m_display_manager->drawArrays(3);
-        m_color_triangle_va->unbind();
+        if (m_current_task.get() != (Task*)m_offset_task.get())
+        {
+            if (m_current_task.get() != nullptr)
+            {
+                m_task_manager->popTask(m_current_task);
+                m_current_task->shutdown();
+            }
+
+            m_current_task = std::static_pointer_cast<Task>(m_offset_task);
+            m_offset_task->initialize();
+            m_task_manager->pushTask(m_offset_task);
+        }
         break;
     case 5:
-        m_shader_program_color_pos->use();
-        m_color_triangle_va->bind();
-        m_display_manager->drawArrays(3);
-        m_color_triangle_va->unbind();
+        if (m_current_task.get() != (Task*)m_pos_as_color_task.get())
+        {
+            if (m_current_task.get() != nullptr)
+            {
+                m_task_manager->popTask(m_current_task);
+                m_current_task->shutdown();
+            }
+
+            m_current_task = std::static_pointer_cast<Task>(m_pos_as_color_task);
+            m_pos_as_color_task->initialize();
+            m_task_manager->pushTask(m_pos_as_color_task);
+        }
         break;
     }
 }
 
+
+void TestApplication::updateGui()
+{
+    static std::vector<std::string> sample_list({ "simple triangle", "uniform", "more attributes", "upside down", "offset", "position as color"});
+    ImGui::Begin("Options");   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+    if (ImGui::BeginListBox("Sample"))
+    {
+        for (int n = 0; n < sample_list.size(); n++)
+        {
+            const bool is_selected = (m_sample == n);
+            if (ImGui::Selectable(sample_list[n].c_str(), is_selected))
+                m_sample = n;
+
+            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+            if (is_selected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndListBox();
+    }
+
+    static std::vector<std::string> render_mode_list({ "line", "fill" });
+    if (ImGui::BeginListBox("Render mode"))
+    {
+        for (int n = 0; n < render_mode_list.size(); n++)
+        {
+            const bool is_selected = (m_render_mode == n);
+            if (ImGui::Selectable(render_mode_list[n].c_str(), is_selected))
+                m_render_mode = n;
+
+            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+            if (is_selected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndListBox();
+    }
+    ImGui::End();
+}
+
+
+
+void TestApplication::render()
+{
+    m_display_manager->setClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    m_display_manager->clear();
+}

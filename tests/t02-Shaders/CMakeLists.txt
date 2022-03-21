@@ -15,6 +15,18 @@ configure_file (
 # List of source files
 set(SRCS
     config.h
+    SimpleTriangleTask.h
+    SimpleTriangleTask.cpp
+    UniformTask.h
+    UniformTask.cpp
+    MoreAttributesTask.h
+    MoreAttributesTask.cpp
+    UpsideDownTask.h
+    UpsideDownTask.cpp
+    OffsetTask.h
+    OffsetTask.cpp
+    PosAsColorTask.h
+    PosAsColorTask.cpp
     TestApplication.h
     TestApplication.cpp
     main.cpp

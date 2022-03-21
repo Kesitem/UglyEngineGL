@@ -1,6 +1,12 @@
 #pragma once
 
 #include "UglyEngine.h"
+#include "SimpleTriangleTask.h"
+#include "UniformTask.h"
+#include "MoreAttributesTask.h"
+#include "UpsideDownTask.h"
+#include "OffsetTask.h"
+#include "PosAsColorTask.h"
 
 /**
  * @brief Test application.
@@ -17,45 +23,48 @@ public:
 
     /**
      * @brief Initialize application.
-     * 
-     * @return False if error
      */
-    bool initialize();
+    void initialize() override;
 
     /**
      * @brief Shutdown application.
      */
-    void shutdown();
+    void shutdown() override;
 
     /**
      * @brief Update application.
      */
-    void update();
+    void update() override;
+
+    /**
+     * @brief Render Gui.
+     */
+    void updateGui() override;
+
+    /**
+     * @brief Render application.
+     */
+    void render() override;
 
 private:
 
-    std::shared_ptr<ugly::InputManager> m_input_manager;
+    /*! Wireframe flag */
+    int m_render_mode{ 0 };
 
-    std::shared_ptr<ugly::DisplayManager> m_display_manager;
+    /*! Render type. 0 = simple red triangle, 1 = uniform, etc ...*/
+    int m_sample{ 0 };
 
-    std::shared_ptr<ugly::VertexArrays> m_triangle_va;
+    std::shared_ptr<Task> m_current_task{ nullptr };
 
-    std::shared_ptr<ugly::VertexArrays> m_color_triangle_va;
+    std::shared_ptr<SimpleTriangleTask> m_simple_triangle_task{ nullptr };
 
-    std::shared_ptr<ugly::Program> m_shader_program_red;
+    std::shared_ptr<UniformTask> m_uniform_task{ nullptr };
 
-    std::shared_ptr<ugly::Program> m_shader_program_uniform;
+    std::shared_ptr<MoreAttributesTask> m_more_attributes_task{ nullptr };
 
-    std::shared_ptr<ugly::Program> m_shader_program_color;
+    std::shared_ptr<UpsideDownTask> m_upside_down_task{ nullptr };
 
-    std::shared_ptr<ugly::Program> m_shader_program_color_inverted;
+    std::shared_ptr<OffsetTask> m_offset_task{ nullptr };
 
-    std::shared_ptr<ugly::Program> m_shader_program_color_offset;
-
-    std::shared_ptr<ugly::Program> m_shader_program_color_pos;
-
-    bool m_wireframe {false};
-
-    /*! Render type. 0 = triangle, 1 = quad */
-    int m_render_type {0};
+    std::shared_ptr<PosAsColorTask> m_pos_as_color_task{ nullptr };
 };
