@@ -2,5 +2,8 @@
 
 int main()
 {
-	return ugly::Engine::getInstance()->run(new TestApplication());
+	ugly::Engine::getInstance()->initialize();
+	ugly::Engine::getInstance()->run(std::make_shared<TestApplication>());
+
+	return 0;
 }

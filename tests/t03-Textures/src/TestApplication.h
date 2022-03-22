@@ -1,6 +1,9 @@
 #pragma once
 
 #include "UglyEngine.h"
+#include "TriangleTask.h"
+#include "QuadTask.h"
+#include "ColoredQuadTask.h"
 
 /**
  * @brief Test application.
@@ -17,32 +20,30 @@ public:
 
     /**
      * @brief Initialize application.
-     * 
-     * @return False if error
      */
-    bool initialize();
+   void initialize();
 
-    /**
-     * @brief Shutdown application.
-     */
-    void shutdown();
+   /**
+    * @brief Shutdown application.
+    */
+   void shutdown();
 
     /**
      * @brief Update application.
      */
-    void update();
+    void update() override;
+
+    /**
+     * @brief Render Gui.
+     */
+    void updateGui() override;
+
+    /**
+     * @brief Render application.
+     */
+    void render() override;
 
 private:
-
-    /**
-     * @brief Create triangle data.
-     */
-    void createTriangle();
-
-    /**
-     * @brief Draw triangle.
-     */
-    void drawTriangle();
 
     /**
      * @brief Create quad data.
@@ -61,14 +62,20 @@ private:
 
 private:
 
-    std::shared_ptr<ugly::InputManager> m_input_manager;
-    std::shared_ptr<ugly::DisplayManager> m_display_manager;
+    int m_render_mode{ 1 };
+
+    int m_sample{ 0 };
+
+    std::shared_ptr<Task> m_current_task{ nullptr };
+
+    std::shared_ptr<TriangleTask> m_triangle_task {nullptr};
+
+    std::shared_ptr<QuadTask> m_quad_task{ nullptr };
+
+    std::shared_ptr<ColoredQuadTask> m_colored_quad_task{ nullptr };
 
     /*! Triangle VAO */
     std::shared_ptr<ugly::VertexArrays> m_triangle_va;
-
-    /*! Texture */
-    std::shared_ptr<ugly::Texture> m_texture;
 
     /*! Program */
     std::shared_ptr<ugly::Program> m_shader_program;
@@ -88,9 +95,6 @@ private:
     /*! Face texture */
     std::shared_ptr<ugly::Texture> m_face_texture;
 
-    /*! Wireframe flag */
-    bool m_wireframe {false};
 
-    /*! Render type. 0 = triangle, 1 = quad */
-    int m_render_type {0};
+
 };

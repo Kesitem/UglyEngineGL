@@ -51,7 +51,7 @@ private:
     /*! Wireframe flag */
     int m_render_mode{ 0 };
 
-    /*! Render type. 0 = simple red triangle, 1 = uniform, etc ...*/
+    /*! Render type. 0 = triangle, 1 = quad, etc ...*/
     int m_sample{ 0 };
 
     std::shared_ptr<Task> m_current_task{ nullptr };

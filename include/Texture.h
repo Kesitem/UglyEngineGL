@@ -20,11 +20,11 @@ namespace ugly
         /**
          * @brief Constructor.
          */
-        Texture(const char* _filename, 
-            int32_t min_filter = GL_LINEAR_MIPMAP_LINEAR, 
-            int32_t mag_filter = GL_LINEAR, 
-            WrapFilter wrap_s = WrapFilter::MIRRORED_REPEAT,
-            WrapFilter wrap_t = WrapFilter::MIRRORED_REPEAT);
+        Texture(const std::filesystem::path& _path,
+            int32_t _min_filter = GL_LINEAR_MIPMAP_LINEAR, 
+            int32_t _mag_filter = GL_LINEAR, 
+            WrapFilter _wrap_s = WrapFilter::MIRRORED_REPEAT,
+            WrapFilter _wrap_t = WrapFilter::MIRRORED_REPEAT);
 
         /**
          * @brief Destructor.

@@ -10,7 +10,9 @@ ugly::Task::Task()
 
 ugly::Task::~Task()
 {
+    shutdown();
 }
+
 
 void ugly::Task::initialize()
 {

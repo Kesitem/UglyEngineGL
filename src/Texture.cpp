@@ -5,12 +5,12 @@
 #include "stb_image.h"
 
 
-ugly::Texture::Texture(const char* _filename, int32_t _min_filter, int32_t _mag_filter, WrapFilter _wrap_s, WrapFilter _wrap_t)
+ugly::Texture::Texture(const std::filesystem::path& _path, int32_t _min_filter, int32_t _mag_filter, WrapFilter _wrap_s, WrapFilter _wrap_t)
 {
     // Load texture from file
     int width, height, num_channels;
     stbi_set_flip_vertically_on_load(true);
-    unsigned char* data = stbi_load(_filename, &width, &height, &num_channels, 0);
+    unsigned char* data = stbi_load(_path.string().c_str(), &width, &height, &num_channels, 0);
     if (data == nullptr)
     {
         PLOG_ERROR << "Failed to load image from file";

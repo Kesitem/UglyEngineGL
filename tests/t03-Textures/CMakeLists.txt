@@ -15,6 +15,12 @@ configure_file (
 # List of source files
 set(SRCS
     config.h
+    TriangleTask.h
+    TriangleTask.cpp
+    QuadTask.h
+    QuadTask.cpp
+    ColoredQuadTask.h
+    ColoredQuadTask.cpp
     TestApplication.h
     TestApplication.cpp
     main.cpp

@@ -67,7 +67,6 @@ void TestApplication::update()
     else
         m_display_manager->setPolygonMode(ugly::DisplayManager::PolygoneMode::FILL);
 
-    // Draw simple red triangle
     switch (m_sample)
     {
     case 0:
