@@ -66,6 +66,12 @@ void ugly::Program::setUniform(const std::string &_name, const glm::vec4 &_value
 }
 
 
+void ugly::Program::setUniform(const std::string& _name, const glm::mat4& _value)
+{
+    glUniformMatrix4fv(getUniformLocation(_name), 1, GL_FALSE, glm::value_ptr(_value));
+}
+
+
 void ugly::Program::setUniform(const std::string& _name, const uint32_t& _value)
 {
     glUniform1ui(getUniformLocation(_name),

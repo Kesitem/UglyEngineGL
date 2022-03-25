@@ -64,6 +64,14 @@ namespace ugly
         void setUniform(const std::string &_name, const glm::vec4 &_value);
 
         /**
+         * @brief Set the Uniform mat4 value
+         *
+         * @param _name     Uniform name
+         * @param _value    Value
+         */
+        void setUniform(const std::string& _name, const glm::mat4& _value);
+
+        /**
          * @brief Set the Uniform unsigned int value
          *
          * @param _name     Uniform name
