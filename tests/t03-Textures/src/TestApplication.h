@@ -4,6 +4,11 @@
 #include "TriangleTask.h"
 #include "QuadTask.h"
 #include "ColoredQuadTask.h"
+#include "SmileQuadTask.h"
+#include "InvertedSmileQuadTask.h"
+#include "WrappingSmileQuadTask.h"
+#include "ZoomSmileQuadTask.h"
+#include "AdjustableSmileQuadTask.h"
 
 /**
  * @brief Test application.
@@ -43,22 +48,14 @@ public:
      */
     void render() override;
 
-private:
+private: 
 
     /**
-     * @brief Create quad data.
+     * @brief Change the current task.
+     *
+     * @param _task New task
      */
-    void createQuad();
-
-    /**
-     * @brief Draw triangle.
-     */
-    void drawQuad();
-
-    /**
-     * @brief Draw quad with reverse face.
-     */
-    void drawQuadReverse();
+    void changeTask(std::shared_ptr<Task> _task);
 
 private:
 
@@ -74,27 +71,13 @@ private:
 
     std::shared_ptr<ColoredQuadTask> m_colored_quad_task{ nullptr };
 
-    /*! Triangle VAO */
-    std::shared_ptr<ugly::VertexArrays> m_triangle_va;
+    std::shared_ptr<SmileQuadTask> m_smile_quad_task{ nullptr };
 
-    /*! Program */
-    std::shared_ptr<ugly::Program> m_shader_program;
+    std::shared_ptr<InvertedSmileQuadTask> m_inverted_smile_quad_task{ nullptr };
 
-    /*! Quad VAO */
-    std::shared_ptr<ugly::VertexArrays> m_quad_va;
+    std::shared_ptr<WrappingSmileQuadTask> m_wrapping_smile_quad_task{ nullptr };
 
-    /*! Quad texture */
-    std::shared_ptr<ugly::Texture> m_quad_texture;
+    std::shared_ptr<ZoomSmileQuadTask> m_zoom_smile_quad_task{ nullptr };
 
-    /*! Program */
-    std::shared_ptr<ugly::Program> m_quad_shader_program;
-
-    /*! Shader with reverse face */
-    std::shared_ptr<ugly::Program> m_quad_reverse_shader_program;
-
-    /*! Face texture */
-    std::shared_ptr<ugly::Texture> m_face_texture;
-
-
-
+    std::shared_ptr<AdjustableSmileQuadTask> m_adjustable_smile_quad_task{ nullptr };
 };

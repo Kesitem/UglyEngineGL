@@ -15,6 +15,11 @@ void TestApplication::initialize()
     m_triangle_task = std::make_shared<TriangleTask>();
     m_quad_task = std::make_shared<QuadTask>();
     m_colored_quad_task = std::make_shared<ColoredQuadTask>();
+    m_smile_quad_task = std::make_shared<SmileQuadTask>();
+    m_inverted_smile_quad_task = std::make_shared<InvertedSmileQuadTask>();
+    m_wrapping_smile_quad_task = std::make_shared<WrappingSmileQuadTask>();
+    m_zoom_smile_quad_task = std::make_shared<ZoomSmileQuadTask>();
+    m_adjustable_smile_quad_task = std::make_shared<AdjustableSmileQuadTask>();
 }
 
 
@@ -23,6 +28,11 @@ void TestApplication::shutdown()
     m_triangle_task.reset();
     m_quad_task.reset();
     m_colored_quad_task.reset();
+    m_smile_quad_task.reset();
+    m_inverted_smile_quad_task.reset();
+    m_wrapping_smile_quad_task.reset();
+    m_zoom_smile_quad_task.reset();
+    m_adjustable_smile_quad_task.reset();
 }
 
 
@@ -39,46 +49,28 @@ void TestApplication::update()
     switch (m_sample)
     {
     case 0:
-        if (m_current_task.get() != (Task*)m_triangle_task.get())
-        {
-            if (m_current_task.get() != nullptr)
-            {
-                m_task_manager->popTask(m_current_task);
-                m_current_task->shutdown();
-            }
-
-            m_current_task = std::static_pointer_cast<Task>(m_triangle_task);
-            m_triangle_task->initialize();
-            m_task_manager->pushTask(m_triangle_task);
-        }
+        changeTask(std::static_pointer_cast<Task>(m_triangle_task));
         break;
     case 1:
-        if (m_current_task.get() != (Task*)m_quad_task.get())
-        {
-            if (m_current_task.get() != nullptr)
-            {
-                m_task_manager->popTask(m_current_task);
-                m_current_task->shutdown();
-            }
-
-            m_current_task = std::static_pointer_cast<Task>(m_quad_task);
-            m_quad_task->initialize();
-            m_task_manager->pushTask(m_quad_task);
-        }
+        changeTask(std::static_pointer_cast<Task>(m_quad_task));
         break;
     case 2:
-        if (m_current_task.get() != (Task*)m_colored_quad_task.get())
-        {
-            if (m_current_task.get() != nullptr)
-            {
-                m_task_manager->popTask(m_current_task);
-                m_current_task->shutdown();
-            }
-
-            m_current_task = std::static_pointer_cast<Task>(m_colored_quad_task);
-            m_colored_quad_task->initialize();
-            m_task_manager->pushTask(m_colored_quad_task);
-        }
+        changeTask(std::static_pointer_cast<Task>(m_colored_quad_task));
+        break;
+    case 3:
+        changeTask(std::static_pointer_cast<Task>(m_smile_quad_task));
+        break;
+    case 4:
+        changeTask(std::static_pointer_cast<Task>(m_inverted_smile_quad_task));
+        break;
+    case 5:
+        changeTask(std::static_pointer_cast<Task>(m_wrapping_smile_quad_task));
+        break;
+    case 6:
+        changeTask(std::static_pointer_cast<Task>(m_zoom_smile_quad_task));
+        break;
+    case 7:
+        changeTask(std::static_pointer_cast<Task>(m_adjustable_smile_quad_task));
         break;
     }
 
@@ -94,7 +86,7 @@ void TestApplication::update()
 
 void TestApplication::updateGui()
 {
-    static std::vector<std::string> sample_list({ "triangle", "quad", "colored quad"});
+    static std::vector<std::string> sample_list({ "triangle", "quad", "colored quad", "happy quad", "inverted happy quad", "wrapping happy quad", "zoom happy quad", "adjustable happy quad"});
     ImGui::Begin("Options");   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
     if (ImGui::BeginListBox("Sample"))
     {
@@ -136,39 +128,18 @@ void TestApplication::render()
     m_display_manager->clear();
 }
 
-
-void TestApplication::createQuad()
+void TestApplication::changeTask(std::shared_ptr<Task> _task)
 {
+    if (m_current_task.get() != _task.get())
+    {
+        if (m_current_task.get() != nullptr)
+        {
+            m_task_manager->popTask(m_current_task);
+            m_current_task->shutdown();
+        }
 
-    m_quad_shader_program = std::make_shared<ugly::Program>("./data/shaders/quad.vert", "./data/shaders/quad.frag");
-    m_quad_reverse_shader_program = std::make_shared<ugly::Program>("./data/shaders/quad.vert", "./data/shaders/quad_reverse.frag");
-    // Create texture
-    m_quad_texture = std::make_shared<ugly::Texture>("./data/textures/container.jpg");
-    m_face_texture = std::make_shared<ugly::Texture>("./data/textures/awesomeface.png");
-}
-
-
-void TestApplication::drawQuad()
-{
-    m_quad_va->bind();
-    m_quad_texture->bind(0);
-    m_face_texture->bind(1);
-    m_quad_shader_program->use();
-    m_quad_shader_program->setUniform("texture0", 0);
-    m_quad_shader_program->setUniform("texture1", 1);
-    m_display_manager->drawElements(6);
-    m_quad_va->unbind();
-}
-
-
-void TestApplication::drawQuadReverse()
-{
-    m_quad_va->bind();
-    m_quad_texture->bind(0);
-    m_face_texture->bind(1);
-    m_quad_reverse_shader_program->use();
-    m_quad_shader_program->setUniform("texture0", 0);
-    m_quad_shader_program->setUniform("texture1", 1);
-    m_display_manager->drawElements(6);
-    m_quad_va->unbind();
+        m_current_task = _task;
+        _task->initialize();
+        m_task_manager->pushTask(_task);
+    }
 }

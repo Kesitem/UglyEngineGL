@@ -21,6 +21,16 @@ set(SRCS
     QuadTask.cpp
     ColoredQuadTask.h
     ColoredQuadTask.cpp
+    SmileQuadTask.h
+    SmileQuadTask.cpp
+    InvertedSmileQuadTask.h
+    InvertedSmileQuadTask.cpp
+    WrappingSmileQuadTask.h
+    WrappingSmileQuadTask.cpp
+    ZoomSmileQuadTask.h
+    ZoomSmileQuadTask.cpp
+    AdjustableSmileQuadTask.h
+    AdjustableSmileQuadTask.cpp
     TestApplication.h
     TestApplication.cpp
     main.cpp

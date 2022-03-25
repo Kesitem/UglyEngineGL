@@ -5,7 +5,7 @@
 #include "stb_image.h"
 
 
-ugly::Texture::Texture(const std::filesystem::path& _path, int32_t _min_filter, int32_t _mag_filter, WrapFilter _wrap_s, WrapFilter _wrap_t)
+ugly::Texture::Texture(const std::filesystem::path& _path, MinMagFilter _min_filter, MinMagFilter _mag_filter, WrapFilter _wrap_s, WrapFilter _wrap_t)
 {
     // Load texture from file
     int width, height, num_channels;
@@ -68,10 +68,10 @@ void ugly::Texture::bind(uint32_t _unit)
 }
 
 
-void ugly::Texture::setFilter(int32_t min_filter, int32_t mag_filter)
+void ugly::Texture::setFilter(MinMagFilter min_filter, MinMagFilter mag_filter)
 {
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (int32_t)min_filter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (int32_t)mag_filter);
 }
 
 
