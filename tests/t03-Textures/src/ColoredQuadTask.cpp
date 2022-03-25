@@ -49,7 +49,7 @@ void ColoredQuadTask::initialize()
     m_va->unbind();
 
     // Create program
-    m_program = std::make_shared<ugly::Program>(std::filesystem::path("./data/shaders/quad.vert"), std::filesystem::path("./data/shaders/quad_colored.frag"));
+    m_program = std::make_shared<ugly::Program>(std::filesystem::path("./data/shaders/quad_colored.vert"), std::filesystem::path("./data/shaders/quad_colored.frag"));
 
     // Create texture
     m_texture = std::make_shared<ugly::Texture>("./data/textures/container.jpg");
