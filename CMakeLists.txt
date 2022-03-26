@@ -52,6 +52,7 @@ set(HEADERS
     Program.h
     Shader.h
     Texture.h
+    external/par_shapes.h
 )
 # List of source files
 set(SRCS
