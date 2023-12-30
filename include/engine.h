@@ -1,7 +1,10 @@
 #pragma once
 
+#include "core.h"
 namespace ugly
 {
+    class Application;
+
     class Engine
     {
     public:
@@ -18,6 +21,18 @@ namespace ugly
                 m_instance = new Engine();
             return m_instance;
         }
+
+        /**
+         * @brief Run the engine.
+         * 
+         * @param application   Application to run
+         */
+        void run(Application* application);
+
+        /**
+         * @brief Quit the engine.
+         */
+        void quit();
 
     private:
 
@@ -36,10 +51,41 @@ namespace ugly
          */
         void initializePLog();
 
+        /**
+         * @brief Initialize engine.
+         */
+        void initialize();
+
+        /**
+         * @brief Shutdown engine.
+         */
+        void shutdown();
+
+        /**
+         * @brief Main loop.
+         */
+        void mainLoop();
+
     private:
 
         /*! Singleton instance */
         inline static Engine* m_instance {nullptr};
+
+        /*! Application */
+        std::unique_ptr<ugly::Application> m_application {nullptr};
+
+        /*! Quit flag */
+        bool m_quit {false};
+
+        /*! GFLW window */
+        GLFWwindow* m_window {nullptr};
+
+        /*! Window width */
+        int m_window_width {1280};
+
+        /*! Window width */
+        int m_window_height {720};
+
 
     };
 

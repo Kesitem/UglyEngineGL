@@ -1,6 +1,9 @@
 #include "engine.h"
+#include "config.h"
 #include "core.h"
 #include "log_formatter.h"
+#include "application.h"
+
 
 ugly::Engine::Engine()
 {
@@ -13,6 +16,47 @@ ugly::Engine::Engine()
 
 ugly::Engine::~Engine()
 {
+}
+
+
+void ugly::Engine::run(Application* _application)
+{
+    LOG_INFO << "--- Run the application";
+
+    if(_application == nullptr)
+    {
+        LOG_ERROR << "Invalid application";
+        return;
+    }
+    m_application.reset(_application);
+
+    try
+    {
+        initialize();
+    }
+    catch(const std::runtime_error& e)
+    {
+        LOG_ERROR << e.what();
+        shutdown();
+        return;
+    }
+    
+    try
+    {
+        mainLoop();
+    }
+    catch(const std::runtime_error& e)
+    {
+        LOG_ERROR << e.what();
+    }
+    
+    shutdown();
+}
+
+
+void ugly::Engine::quit()
+{
+    m_quit = true;
 }
 
 
@@ -33,4 +77,64 @@ void ugly::Engine::initializePLog()
     static plog::ConsoleAppender<plog::LogFormatter> console_appender;
 
     plog::init(plog::debug, &console_appender).addAppender(&file_appender);
+}
+
+
+void ugly::Engine::initialize()
+{
+    LOG_INFO << "Initialize engine";
+
+    if (!glfwInit())
+    {
+        LOG_ERROR << "Failed to init GLFW";
+        throw std::runtime_error("Failed to init GLFW");
+    }
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    LOG_INFO << "Window size: " << m_window_width << "x" << m_window_height;
+    m_window = glfwCreateWindow(m_window_width, m_window_height, ugly::project::NAME, NULL, NULL);
+    if (!m_window)
+    {
+        LOG_ERROR << "Failed to create GLFW window";
+        throw std::runtime_error("Failed to create GLFW window");
+    }
+
+    glfwMakeContextCurrent(m_window);
+
+    m_application->initialize();
+}
+
+
+
+void ugly::Engine::shutdown()
+{
+    LOG_INFO << "Shutdown engine";
+
+    if(m_application.get() != nullptr)
+    {
+        m_application->shutdown();
+        m_application.reset();
+    }
+
+    glfwTerminate();
+}
+
+
+void ugly::Engine::mainLoop()
+{
+    LOG_INFO << "Enter main loop";
+
+    while (!m_quit)
+    {
+        if(glfwWindowShouldClose(m_window))
+            m_quit = true;
+
+        m_application->update();
+
+        glfwSwapBuffers(m_window);
+        glfwPollEvents();
+    }
 }

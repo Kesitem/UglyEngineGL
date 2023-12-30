@@ -7,6 +7,9 @@ project(UglyEngineGL VERSION 0.0.1
 # Add plog
 find_package(plog CONFIG REQUIRED)
 
+# Add glfw3
+find_package(glfw3 CONFIG REQUIRED)
+
 # Set sources files path
 set(INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -23,12 +26,14 @@ set(HEADERS
     config.h
     core.h
     engine.h
+    application.h
 )
 # List of source files
 set(SRCS
     engine.cpp
     log_formatter.cpp
     log_formatter.h
+    application.cpp
 )
 
 # Generate filename with path
@@ -49,7 +54,7 @@ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 target_include_directories(${PROJECT_NAME} PUBLIC ${PLOG_INCLUDE_DIRS} ${Stb_INCLUDE_DIR})
 
 # Add library
-target_link_libraries(${PROJECT_NAME} PUBLIC plog::plog)
+target_link_libraries(${PROJECT_NAME} PUBLIC plog::plog glfw)
 
 # Set include directory for compilation
 target_include_directories(${PROJECT_NAME} PUBLIC

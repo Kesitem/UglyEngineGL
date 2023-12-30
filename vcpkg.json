@@ -2,6 +2,7 @@
   "name": "uglyenginegl",
   "version": "0.0.1",
   "dependencies": [
-    "plog"
+    "plog",
+    "glfw3"
   ]
 }
