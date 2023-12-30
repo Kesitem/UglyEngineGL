@@ -1,0 +1,64 @@
+cmake_minimum_required(VERSION 3.12)
+
+project(UglyEngineGL VERSION 0.0.1
+                  DESCRIPTION "A simple OpenGL game engine"
+                  LANGUAGES CXX)
+
+# Add plog
+find_package(plog CONFIG REQUIRED)
+
+# Set sources files path
+set(INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
+set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+# Configure version 
+configure_file (
+    "${INC_DIR}/config.h.in"
+    "${INC_DIR}/config.h"
+)
+
+# List of header files
+set(HEADERS
+    UglyEngine.h
+    config.h
+    core.h
+    engine.h
+)
+# List of source files
+set(SRCS
+    engine.cpp
+    log_formatter.cpp
+    log_formatter.h
+)
+
+# Generate filename with path
+foreach(H ${HEADERS})
+    list(APPEND ALL_HEADERS ${INC_DIR}/${H})
+endforeach() 
+foreach(S ${SRCS})
+    list(APPEND ALL_SRCS ${SRC_DIR}/${S})
+endforeach()
+
+# Create library
+add_library(${PROJECT_NAME} STATIC ${ALL_SRCS} ${ALL_HEADERS})
+
+# Set C++17 feature
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
+
+# Add directories
+target_include_directories(${PROJECT_NAME} PUBLIC ${PLOG_INCLUDE_DIRS} ${Stb_INCLUDE_DIR})
+
+# Add library
+target_link_libraries(${PROJECT_NAME} PUBLIC plog::plog)
+
+# Set include directory for compilation
+target_include_directories(${PROJECT_NAME} PUBLIC
+        ${PROJECT_SOURCE_DIR}/include)
+
+# Set include directory for clients
+target_include_directories(${PROJECT_NAME} PUBLIC
+    $<BUILD_INTERFACE:${INC_DIR}/${PROJECT_NAME}>
+    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+    PRIVATE src)
+
+add_subdirectory(Samples)
