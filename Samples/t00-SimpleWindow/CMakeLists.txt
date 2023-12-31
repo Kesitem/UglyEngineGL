@@ -11,7 +11,7 @@ configure_file (
      "${SRC_DIR}/config.h"
 )
 
-add_executable(${PROJECT_NAME} ./src/main.cpp ./src/config.h)
+add_executable(${PROJECT_NAME} ./src/main.cpp ./src/config.h ./src/test_application.h ./src/test_application.cpp)
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 
