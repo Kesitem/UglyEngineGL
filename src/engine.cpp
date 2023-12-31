@@ -3,6 +3,7 @@
 #include "core.h"
 #include "log_formatter.h"
 #include "application.h"
+#include "input_manager.h"
 
 
 ugly::Engine::Engine()
@@ -60,6 +61,18 @@ void ugly::Engine::quit()
 }
 
 
+GLFWwindow* ugly::Engine::getWindow() const
+{
+    return m_window;
+}
+
+
+ugly::InputManager* ugly::Engine::getInputManager() const
+{
+    return m_input_manager.get();
+}
+
+
 void ugly::Engine::initializePLog()
 {
     // Remove log file if exists
@@ -104,6 +117,8 @@ void ugly::Engine::initialize()
 
     glfwMakeContextCurrent(m_window);
 
+    m_input_manager = std::make_unique<InputManager>();
+
     m_application->initialize();
 }
 
@@ -119,6 +134,9 @@ void ugly::Engine::shutdown()
         m_application.reset();
     }
 
+    if(m_input_manager.get() != nullptr)
+        m_input_manager.reset();
+
     glfwTerminate();
 }
 
@@ -133,6 +151,8 @@ void ugly::Engine::mainLoop()
             m_quit = true;
 
         m_application->update();
+
+        m_input_manager->update();
 
         glfwSwapBuffers(m_window);
         glfwPollEvents();

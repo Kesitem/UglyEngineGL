@@ -4,6 +4,7 @@
 namespace ugly
 {
     class Application;
+    class InputManager;
 
     class Engine
     {
@@ -34,6 +35,20 @@ namespace ugly
          */
         void quit();
 
+        /**
+         * @brief Get GLFW window
+         * 
+         * @return GLFW window 
+         */
+        GLFWwindow* getWindow() const;
+
+        /**
+         * @brief Get input manager.
+         * 
+         * @return Input manager
+        */
+        InputManager* getInputManager() const;
+        
     private:
 
         /**
@@ -73,6 +88,9 @@ namespace ugly
 
         /*! Application */
         std::unique_ptr<ugly::Application> m_application {nullptr};
+
+        /*! Input manager */
+        std::unique_ptr<ugly::InputManager> m_input_manager {nullptr};
 
         /*! Quit flag */
         bool m_quit {false};

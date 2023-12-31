@@ -27,6 +27,9 @@ set(HEADERS
     core.h
     engine.h
     application.h
+    input_state.h
+    input_button.h 
+    input_manager.h
 )
 # List of source files
 set(SRCS
@@ -34,6 +37,8 @@ set(SRCS
     log_formatter.cpp
     log_formatter.h
     application.cpp
+    input_button.cpp 
+    input_manager.cpp
 )
 
 # Generate filename with path

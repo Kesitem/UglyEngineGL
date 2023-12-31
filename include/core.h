@@ -2,6 +2,7 @@
 
 // C++ standards libs
 #include <memory>
+#include <map>
 #include <string>
 #include <filesystem>
 
