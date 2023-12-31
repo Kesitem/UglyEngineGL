@@ -4,6 +4,7 @@
 #include "log_formatter.h"
 #include "application.h"
 #include "input_manager.h"
+#include "display_manager.h"
 
 
 ugly::Engine::Engine()
@@ -73,6 +74,12 @@ ugly::InputManager* ugly::Engine::getInputManager() const
 }
 
 
+ugly::DisplayManager* ugly::Engine::getDisplayManager() const
+{
+    return m_display_manager.get();
+}
+
+
 void ugly::Engine::initializePLog()
 {
     // Remove log file if exists
@@ -117,8 +124,10 @@ void ugly::Engine::initialize()
 
     glfwMakeContextCurrent(m_window);
 
+    m_display_manager = std::make_unique<DisplayManager>();
     m_input_manager = std::make_unique<InputManager>();
 
+    m_display_manager->setViewport(0, 0, m_window_width, m_window_height);
     m_application->initialize();
 }
 
@@ -136,6 +145,9 @@ void ugly::Engine::shutdown()
 
     if(m_input_manager.get() != nullptr)
         m_input_manager.reset();
+
+    if (m_display_manager.get() != nullptr)
+        m_display_manager.reset();
 
     glfwTerminate();
 }

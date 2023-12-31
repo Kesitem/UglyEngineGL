@@ -11,6 +11,9 @@
 #include <plog/Initializers/ConsoleInitializer.h>
 #include <plog/Log.h>
 
+// glad
+#include <glad/glad.h>
+
 // opengl
 #include <GLFW/glfw3.h>
 

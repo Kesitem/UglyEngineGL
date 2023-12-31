@@ -5,6 +5,7 @@ namespace ugly
 {
     class Application;
     class InputManager;
+    class DisplayManager;
 
     class Engine
     {
@@ -48,6 +49,13 @@ namespace ugly
          * @return Input manager
         */
         InputManager* getInputManager() const;
+
+        /**
+         * @brief Get display manager.
+         * 
+         * @return Display manager
+        */
+        DisplayManager* getDisplayManager() const;
         
     private:
 
@@ -92,6 +100,9 @@ namespace ugly
         /*! Input manager */
         std::unique_ptr<ugly::InputManager> m_input_manager {nullptr};
 
+        /*! Display manager */
+        std::unique_ptr<ugly::DisplayManager> m_display_manager {nullptr};
+
         /*! Quit flag */
         bool m_quit {false};
 
@@ -103,8 +114,6 @@ namespace ugly
 
         /*! Window width */
         int m_window_height {720};
-
-
     };
 
 }//namespace ugly

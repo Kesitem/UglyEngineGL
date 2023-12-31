@@ -10,6 +10,9 @@ find_package(plog CONFIG REQUIRED)
 # Add glfw3
 find_package(glfw3 CONFIG REQUIRED)
 
+# Add glad
+find_package(glad CONFIG REQUIRED)
+
 # Set sources files path
 set(INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -30,6 +33,7 @@ set(HEADERS
     input_state.h
     input_button.h 
     input_manager.h
+    display_manager.h
 )
 # List of source files
 set(SRCS
@@ -39,6 +43,7 @@ set(SRCS
     application.cpp
     input_button.cpp 
     input_manager.cpp
+    display_manager.cpp
 )
 
 # Generate filename with path
@@ -59,7 +64,7 @@ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 target_include_directories(${PROJECT_NAME} PUBLIC ${PLOG_INCLUDE_DIRS} ${Stb_INCLUDE_DIR})
 
 # Add library
-target_link_libraries(${PROJECT_NAME} PUBLIC plog::plog glfw)
+target_link_libraries(${PROJECT_NAME} PUBLIC plog::plog glfw glad::glad)
 
 # Set include directory for compilation
 target_include_directories(${PROJECT_NAME} PUBLIC
