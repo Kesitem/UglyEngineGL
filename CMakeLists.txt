@@ -7,6 +7,9 @@ project(UglyEngineGL VERSION 0.0.1
 # Add plog
 find_package(plog CONFIG REQUIRED)
 
+# Add glm
+find_package(glm CONFIG REQUIRED)
+
 # Add glfw3
 find_package(glfw3 CONFIG REQUIRED)
 
@@ -34,7 +37,13 @@ set(HEADERS
     input_button.h 
     input_manager.h
     display_manager.h
+    vertex_buffer.h
+    index_buffer.h
+    vertex_arrays.h
+    shader.h 
+    program.h
 )
+
 # List of source files
 set(SRCS
     engine.cpp
@@ -44,6 +53,11 @@ set(SRCS
     input_button.cpp 
     input_manager.cpp
     display_manager.cpp
+    vertex_buffer.cpp
+    index_buffer.cpp
+    vertex_arrays.cpp
+    shader.cpp 
+    program.cpp
 )
 
 # Generate filename with path
@@ -64,7 +78,7 @@ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 target_include_directories(${PROJECT_NAME} PUBLIC ${PLOG_INCLUDE_DIRS} ${Stb_INCLUDE_DIR})
 
 # Add library
-target_link_libraries(${PROJECT_NAME} PUBLIC plog::plog glfw glad::glad)
+target_link_libraries(${PROJECT_NAME} PUBLIC plog::plog glfw glad::glad glm::glm)
 
 # Set include directory for compilation
 target_include_directories(${PROJECT_NAME} PUBLIC

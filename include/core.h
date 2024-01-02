@@ -4,6 +4,7 @@
 #include <memory>
 #include <map>
 #include <string>
+#include <fstream>
 #include <filesystem>
 
 // plog
@@ -16,6 +17,12 @@
 
 // opengl
 #include <GLFW/glfw3.h>
+
+// Include glm
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 namespace ugly
 {
