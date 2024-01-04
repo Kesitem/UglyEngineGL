@@ -6,6 +6,7 @@ namespace ugly
     class Application;
     class InputManager;
     class DisplayManager;
+    class ImguiManager;
 
     class Engine
     {
@@ -66,6 +67,13 @@ namespace ugly
          * @return Display manager
         */
         DisplayManager* getDisplayManager() const;
+
+        /**
+         * @brief Get IMGUI manager.
+         * 
+         * @return IMGUI manager
+        */
+        ImguiManager* getImguiManager() const;
         
     private:
 
@@ -102,6 +110,9 @@ namespace ugly
 
         /*! Display manager */
         std::unique_ptr<ugly::DisplayManager> m_display_manager {nullptr};
+
+        /*! IMGUI manager */
+        std::unique_ptr<ugly::ImguiManager> m_imgui_manager {nullptr};
 
         /*! Quit flag */
         bool m_quit {false};

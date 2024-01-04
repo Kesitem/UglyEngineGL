@@ -29,6 +29,11 @@ public:
      */
     void update();
 
+    /**
+     * @brief Update IMGUI
+     */
+    void updateImgui();
+
 private:
 
     /*! Engine */

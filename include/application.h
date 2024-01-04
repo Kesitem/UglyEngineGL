@@ -34,6 +34,11 @@ namespace ugly
          * @brief Update application
          */
         virtual void update();
+
+        /**
+         * @brief Update IMGUI
+         */
+        virtual void updateImgui();
     };
 
 }//namespace ugly

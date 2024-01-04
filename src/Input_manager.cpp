@@ -3,23 +3,62 @@
 #include "engine.h"
 
 
-/**
- * @brief GLFW key callback.
- */
-void glfwKeyCallback(GLFWwindow* _window, int _key, int _scancode, int _action, int _mods)
+void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+    static ImGuiIO& io = ImGui::GetIO();
     static auto input_manager = ugly::Engine::getInstance()->getInputManager();
 
-    input_manager->processKeyChange(_key, _action);
+    ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
+
+    if(!io.WantCaptureKeyboard)
+        input_manager->processKeyChange(key, action);
 }
+
+
+void glfwCharCallback(GLFWwindow* window, unsigned int codepoint)
+{
+    ImGui_ImplGlfw_CharCallback(window, codepoint);
+}
+
+
+void glfwMouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+{
+    ImGui_ImplGlfw_MouseButtonCallback(window, button, action, mods);
+}
+
+
+void glfwCursorPosCallback(GLFWwindow* window, double xpos, double ypos)
+{
+    ImGui_ImplGlfw_CursorPosCallback(window, xpos, ypos);
+}
+
+
+void glfwCursorEnterCallback(GLFWwindow* window, int entered)
+{
+    ImGui_ImplGlfw_CursorEnterCallback(window, entered);
+}
+
+
+void glfwScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
+}
+
 
 
 ugly::InputManager::InputManager()
 {
     LOG_INFO << "Initialize input manager";
     
+    auto window = ugly::Engine::getInstance()->getWindow();
+    
     // Register input callbacks
-    glfwSetKeyCallback(ugly::Engine::getInstance()->getWindow(), glfwKeyCallback);
+    glfwSetKeyCallback(window, glfwKeyCallback);
+    glfwSetCharCallback(window, glfwCharCallback);
+    glfwSetMouseButtonCallback(window, glfwMouseButtonCallback);
+    glfwSetCursorPosCallback(window, glfwCursorPosCallback);
+    glfwSetCursorEnterCallback(window, glfwCursorEnterCallback);
+    glfwSetScrollCallback(window, glfwScrollCallback);
 }
 
 

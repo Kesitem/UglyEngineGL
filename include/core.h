@@ -24,6 +24,11 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
 
+// Include imgui
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
 namespace ugly
 {
 	static const std::string LOG_FILENAME = "UglyEngine.log";

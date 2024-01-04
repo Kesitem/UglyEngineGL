@@ -26,3 +26,8 @@ void ugly::Application::shutdown()
 void ugly::Application::update()
 {
 }
+
+
+void ugly::Application::updateImgui()
+{
+}

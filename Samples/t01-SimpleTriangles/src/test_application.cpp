@@ -79,3 +79,19 @@ void TestApplication::update()
     m_display_manager->drawArrays(0, 3);
     m_va.unbind();
 }
+
+
+void TestApplication::updateImgui()
+{
+    ImGui::ShowDemoWindow();
+
+    static bool test1 = true;
+    static bool test2 = false;
+    ImGui::Begin("Options");
+    {
+        ImGui::Text("This is some useful text."); 
+        ImGui::Checkbox("Demo Window", &test1);      // Edit bools storing our window open/close state
+        ImGui::Checkbox("Another Window", &test2);
+    }
+    ImGui::End();
+}
