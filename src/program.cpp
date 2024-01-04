@@ -2,9 +2,30 @@
 #include "shader.h"
 
 
-ugly::Program::Program(const ugly::Shader& _vertex_shader, const ugly::Shader& _fragment_shader)
+ugly::Program::Program()
 {
     m_id = glCreateProgram();
+}
+
+
+ugly::Program::Program(const ugly::Shader& _vertex_shader, const ugly::Shader& _fragment_shader) : Program()
+{
+    create(_vertex_shader, _fragment_shader);
+}
+
+
+ugly::Program::~Program()
+{
+    if(m_uniforms_location.size() != 0)
+    {
+        glDeleteProgram(m_id);
+        m_id = 0;
+    }
+}
+
+
+void ugly::Program::create(const Shader& _vertex_shader, const Shader& _fragment_shader)
+{
     glAttachShader(m_id, _vertex_shader.getId());
     glAttachShader(m_id, _fragment_shader.getId());
     glLinkProgram(m_id);
@@ -18,31 +39,6 @@ ugly::Program::Program(const ugly::Shader& _vertex_shader, const ugly::Shader& _
         glGetProgramInfoLog(m_id, 512, NULL, info_log);
         PLOG_ERROR << "program link failed: " << info_log;
         throw new std::runtime_error("Failed to link program");
-    }
-}
-
-
-ugly::Program::Program(const char* _vertex_shader_source, const char* _fragment_shader_source) : 
-    Program(ugly::Shader(ShaderType::VERTEX, _vertex_shader_source), 
-            ugly::Shader(ShaderType::FRAGMENT, _fragment_shader_source))
-{
-}
-
-
-ugly::Program::Program( const std::filesystem::path& _vertex_sharder_path,
-                        const std::filesystem::path& _fragment_shader_path) : 
-    Program(Shader(ShaderType::VERTEX, _vertex_sharder_path), 
-            Shader(ShaderType::FRAGMENT, _fragment_shader_path))
-{
-}
-
-
-ugly::Program::~Program()
-{
-    if(m_uniforms_location.size() != 0)
-    {
-        glDeleteProgram(m_id);
-        m_id = 0;
     }
 }
 

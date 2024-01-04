@@ -39,4 +39,8 @@ private:
 
     /*! Display manager */
     ugly::DisplayManager* m_display_manager {nullptr};
+
+    ugly::VertexArrays m_va;
+
+	ugly::Program m_program;
 };

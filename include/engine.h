@@ -25,6 +25,16 @@ namespace ugly
         }
 
         /**
+         * @brief Initialize engine.
+         */
+        void initialize();
+
+        /**
+         * @brief Shutdown engine.
+         */
+        void shutdown();
+        
+        /**
          * @brief Run the engine.
          * 
          * @param application   Application to run
@@ -73,16 +83,6 @@ namespace ugly
          * @brief Initialize plog.
          */
         void initializePLog();
-
-        /**
-         * @brief Initialize engine.
-         */
-        void initialize();
-
-        /**
-         * @brief Shutdown engine.
-         */
-        void shutdown();
 
         /**
          * @brief Main loop.

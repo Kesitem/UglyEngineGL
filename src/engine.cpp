@@ -12,7 +12,7 @@ ugly::Engine::Engine()
     initializePLog();
 
     auto path = std::filesystem::current_path();
-    LOG_INFO << "Current path: " << path.c_str();
+    LOG_INFO << "Current path: " << path.c_str();    
 }
 
 
@@ -21,6 +21,51 @@ ugly::Engine::~Engine()
 }
 
 
+void ugly::Engine::initialize()
+{
+    LOG_INFO << "Initialize engine";
+
+    if (!glfwInit())
+    {
+        LOG_ERROR << "Failed to init GLFW";
+        throw std::runtime_error("Failed to init GLFW");
+    }
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    LOG_INFO << "Window size: " << m_window_width << "x" << m_window_height;
+    m_window = glfwCreateWindow(m_window_width, m_window_height, ugly::project::NAME, NULL, NULL);
+    if (!m_window)
+    {
+        LOG_ERROR << "Failed to create GLFW window";
+        throw std::runtime_error("Failed to create GLFW window");
+    }
+
+    glfwMakeContextCurrent(m_window);
+
+    m_display_manager = std::make_unique<DisplayManager>();
+    m_input_manager = std::make_unique<InputManager>();
+
+    m_display_manager->setViewport(0, 0, m_window_width, m_window_height);
+}
+
+
+
+void ugly::Engine::shutdown()
+{
+    LOG_INFO << "Shutdown engine";
+
+    if(m_input_manager.get() != nullptr)
+        m_input_manager.reset();
+
+    if (m_display_manager.get() != nullptr)
+        m_display_manager.reset();
+
+    glfwTerminate();
+}
+
 void ugly::Engine::run(Application* _application)
 {
     LOG_INFO << "--- Run the application";
@@ -28,19 +73,20 @@ void ugly::Engine::run(Application* _application)
     if(_application == nullptr)
     {
         LOG_ERROR << "Invalid application";
-        return;
+        throw std::runtime_error("Invalid application");
     }
     m_application.reset(_application);
 
     try
     {
-        initialize();
+        m_application->initialize();
     }
     catch(const std::runtime_error& e)
     {
         LOG_ERROR << e.what();
-        shutdown();
-        return;
+        m_application->shutdown();
+        m_application.reset();
+        throw std::runtime_error("Failed to initialize application");
     }
     
     try
@@ -50,9 +96,11 @@ void ugly::Engine::run(Application* _application)
     catch(const std::runtime_error& e)
     {
         LOG_ERROR << e.what();
+        throw std::runtime_error("Error while running main loop");
     }
     
-    shutdown();
+    m_application->shutdown();
+    m_application.reset();
 }
 
 
@@ -97,59 +145,6 @@ void ugly::Engine::initializePLog()
     static plog::ConsoleAppender<plog::LogFormatter> console_appender;
 
     plog::init(plog::debug, &console_appender).addAppender(&file_appender);
-}
-
-
-void ugly::Engine::initialize()
-{
-    LOG_INFO << "Initialize engine";
-
-    if (!glfwInit())
-    {
-        LOG_ERROR << "Failed to init GLFW";
-        throw std::runtime_error("Failed to init GLFW");
-    }
-
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    LOG_INFO << "Window size: " << m_window_width << "x" << m_window_height;
-    m_window = glfwCreateWindow(m_window_width, m_window_height, ugly::project::NAME, NULL, NULL);
-    if (!m_window)
-    {
-        LOG_ERROR << "Failed to create GLFW window";
-        throw std::runtime_error("Failed to create GLFW window");
-    }
-
-    glfwMakeContextCurrent(m_window);
-
-    m_display_manager = std::make_unique<DisplayManager>();
-    m_input_manager = std::make_unique<InputManager>();
-
-    m_display_manager->setViewport(0, 0, m_window_width, m_window_height);
-    m_application->initialize();
-}
-
-
-
-void ugly::Engine::shutdown()
-{
-    LOG_INFO << "Shutdown engine";
-
-    if(m_application.get() != nullptr)
-    {
-        m_application->shutdown();
-        m_application.reset();
-    }
-
-    if(m_input_manager.get() != nullptr)
-        m_input_manager.reset();
-
-    if (m_display_manager.get() != nullptr)
-        m_display_manager.reset();
-
-    glfwTerminate();
 }
 
 

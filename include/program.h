@@ -14,6 +14,11 @@ namespace ugly
     public:
 
         /**
+         * @brief Default constructor.
+         */
+        Program();
+        
+        /**
          * @brief Constructor from Shader objects.
          * 
          * @param _vertex_shader    Vertex shader 
@@ -22,25 +27,17 @@ namespace ugly
         Program(const Shader& _vertex_shader, const Shader& _fragment_shader);
 
         /**
-         * @brief Constructor from shader source code.
-         *
-         * @param _vertex_shader_source    Vertex shader code
-         * @param _fragment_shader_source  Program shader code
-         */
-        Program(const char* _vertex_shader_source, const char* _fragment_shader_source);
-
-        /**
-         * @brief Constructor from path to shader files.
-         *
-         * @param vertex_shader_path    Vertex shader path
-         * @param fragment_shader_path  Program shader path
-         */
-        Program(const std::filesystem::path& _vertex_sharder_path, const std::filesystem::path& _fragment_shader_path);
-
-        /**
          * @brief Destructor.
          */
         virtual ~Program();
+
+        /**
+         * @Brief Create program from shader objects.
+         * 
+         * @param _vertex_shader    Vertex shader 
+         * @param _fragment_shader  Program shader
+         */
+        void create(const Shader& _vertex_shader, const Shader& _fragment_shader);
 
         /**
          * @brief Use shader program.
