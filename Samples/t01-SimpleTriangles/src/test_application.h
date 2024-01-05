@@ -45,14 +45,26 @@ private:
     /*! Display manager */
     ugly::DisplayManager* m_display_manager {nullptr};
 
-    /*! Shader program*/
-    ugly::Program m_program;
+    /*! Shader program orange*/
+    ugly::Program m_program_orange;
+
+    /*! Shader program yellow*/
+    ugly::Program m_program_yellow;
 
     /*! Vertex array for simple triangle */
-    ugly::VertexArrays m_va_simple_triangle;
+    ugly::VertexArrays m_va_triangle;
 
     /*! Vertex array for the quad */
     ugly::VertexArrays m_va_quad;
+
+    /*! Vertex array for the double triangle */
+    ugly::VertexArrays m_va_double_triangle;
+
+    /*! Vertex array for simple triangle 0 */
+    ugly::VertexArrays m_va_triangle_0;
+
+    /*! Vertex array for simple triangle 1 */
+    ugly::VertexArrays m_va_triangle_1;
 
     /*! Selected sample */
     int m_sample {0};

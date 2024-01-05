@@ -27,16 +27,25 @@ void TestApplication::initialize()
         "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
         "}\0";
 
-    const char *fragment_shader_source = "#version 330 core\n"
+    const char *fragment_shader_source_orange = "#version 330 core\n"
         "out vec4 FragColor;\n"
         "void main()\n"
         "{\n"
         "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
         "}\0";
 
+        const char *fragment_shader_source_yellow = "#version 330 core\n"
+        "out vec4 FragColor;\n"
+        "void main()\n"
+        "{\n"
+        "   FragColor = vec4(1.0f, 1.0f, 0.0f, 1.0f);\n"
+        "}\0";
+
     // Create program
-    m_program.create(ugly::Shader(ugly::ShaderType::VERTEX, vertex_shader_source), 
-                     ugly::Shader(ugly::ShaderType::FRAGMENT, fragment_shader_source));
+    m_program_orange.create(ugly::Shader(ugly::ShaderType::VERTEX, vertex_shader_source), 
+                     ugly::Shader(ugly::ShaderType::FRAGMENT, fragment_shader_source_orange));
+    m_program_yellow.create(ugly::Shader(ugly::ShaderType::VERTEX, vertex_shader_source), 
+                     ugly::Shader(ugly::ShaderType::FRAGMENT, fragment_shader_source_yellow));
 
     float vertices_simple_triangle[] = 
     {
@@ -45,17 +54,17 @@ void TestApplication::initialize()
         0.0f,  0.5f, 0.0f
     };
 
-    m_va_simple_triangle.bind();
+    m_va_triangle.bind();
 
     // Create vertex buffer
     auto bo = std::make_shared<ugly::VertexBuffer>(sizeof(vertices_simple_triangle), vertices_simple_triangle);
     bo->setLayout({ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false)});
 
     // Set vertex pointer
-    m_va_simple_triangle.addVertexBuffer(bo);
+    m_va_triangle.addVertexBuffer(bo);
 
     // Unbind vertex array
-    m_va_simple_triangle.unbind();
+    m_va_triangle.unbind();
 
     float vertices_quad[] = 
     {
@@ -82,6 +91,68 @@ void TestApplication::initialize()
     m_va_quad.setIndexBuffer(ib);
 
     m_va_quad.unbind();
+
+    float vertices_double_triangle[] =
+    {
+        -0.75f, -0.5f, 0.0f,
+        -0.25f, -0.5f, 0.0f,
+        -0.5f,  0.5f, 0.0f,
+        0.25f, -0.5f, 0.0f,
+        0.75f, -0.5f, 0.0f,
+        0.5f,  0.5f, 0.0f,
+    };
+
+    m_va_double_triangle.bind();
+
+    // Create vertex buffer
+    bo = std::make_shared<ugly::VertexBuffer>(sizeof(vertices_double_triangle), vertices_double_triangle);
+    bo->setLayout({ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false)});
+
+    // Set vertex pointer
+    m_va_double_triangle.addVertexBuffer(bo);
+
+    // Unbind vertex array
+    m_va_double_triangle.unbind();
+
+    float vertices_triangle_0[] =
+    {
+        -0.75f, -0.5f, 0.0f,
+        -0.25f, -0.5f, 0.0f,
+        -0.5f,  0.5f, 0.0f
+    };
+
+    // Bind vertex array
+    m_va_triangle_0.bind();
+
+    // Create vertex buffer
+    auto bo_triangle_0 = std::make_shared<ugly::VertexBuffer>(sizeof(vertices_triangle_0), vertices_triangle_0);
+    bo_triangle_0->setLayout({ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false)});
+
+    // Set vertex pointer
+    m_va_triangle_0.addVertexBuffer(bo_triangle_0);
+
+    // Unbind vertex array
+    m_va_triangle_0.unbind();
+
+    float vertices_triangle_1[] =
+    {
+        0.25f, -0.5f, 0.0f,
+        0.75f, -0.5f, 0.0f,
+        0.5f,  0.5f, 0.0f
+    };
+
+    // Bind vertex array
+    m_va_triangle_1.bind();
+
+    // Create vertex buffer
+    auto bo_triangle_1 = std::make_shared<ugly::VertexBuffer>(sizeof(vertices_triangle_1), vertices_triangle_1);
+    bo_triangle_1->setLayout({ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false)});
+
+    // Set vertex pointer
+    m_va_triangle_1.addVertexBuffer(bo_triangle_1);
+
+    // Unbind vertex array
+    m_va_triangle_1.unbind();
 }
 
 
@@ -110,17 +181,45 @@ void TestApplication::update()
 
     if(m_sample == 0)
     {
-        m_program.use();
-        m_va_simple_triangle.bind();
+        m_program_orange.use();
+        m_va_triangle.bind();
         m_display_manager->drawArrays(0, 3);
-        m_va_simple_triangle.unbind();
+        m_va_triangle.unbind();
     } 
     else if (m_sample == 1)
     {
-        m_program.use();
+        m_program_orange.use();
         m_va_quad.bind();
         m_display_manager->drawElements(6);
         m_va_quad.unbind();
+    }
+    else if (m_sample == 2)
+    {
+        m_program_orange.use();
+        m_va_double_triangle.bind();
+        m_display_manager->drawArrays(0, 6);
+        m_va_double_triangle.unbind();
+    }
+    else if (m_sample == 3)
+    {
+        m_program_orange.use();
+        m_va_triangle_0.bind();
+        m_display_manager->drawArrays(0, 3);
+        m_va_triangle_0.unbind();
+        m_va_triangle_1.bind();
+        m_display_manager->drawArrays(0, 3);
+        m_va_triangle_1.unbind();
+    }
+    else if (m_sample == 4)
+    {
+        m_program_orange.use();
+        m_va_triangle_0.bind();
+        m_display_manager->drawArrays(0, 3);
+        m_va_triangle_0.unbind();
+        m_program_yellow.use();
+        m_va_triangle_1.bind();
+        m_display_manager->drawArrays(0, 3);
+        m_va_triangle_1.unbind();
     }
 }
 
