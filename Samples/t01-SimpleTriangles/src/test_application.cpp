@@ -34,7 +34,7 @@ void TestApplication::initialize()
         "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
         "}\0";
 
-        const char *fragment_shader_source_yellow = "#version 330 core\n"
+    const char *fragment_shader_source_yellow = "#version 330 core\n"
         "out vec4 FragColor;\n"
         "void main()\n"
         "{\n"
