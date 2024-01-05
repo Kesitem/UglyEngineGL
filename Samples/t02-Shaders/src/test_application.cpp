@@ -20,25 +20,6 @@ void TestApplication::initialize()
     m_input_manager->createButton("quit");
     m_input_manager->bindKeyToButton(GLFW_KEY_ESCAPE, "quit");
 
-    float vertices_simple_triangle[] = 
-    {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f,  0.5f, 0.0f
-    };
-
-    m_va_triangle.bind();
-
-    // Create vertex buffer
-    auto bo = std::make_shared<ugly::VertexBuffer>(sizeof(vertices_simple_triangle), vertices_simple_triangle);
-    bo->setLayout({ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false)});
-
-    // Set vertex pointer
-    m_va_triangle.addVertexBuffer(bo);
-
-    // Unbind vertex array
-    m_va_triangle.unbind();
-
     const char *vertex_shader_source = "#version 330 core\n"
         "layout (location = 0) in vec3 aPos;\n"
         "out vec4 vertexColor;"
@@ -56,10 +37,6 @@ void TestApplication::initialize()
         "   FragColor = vertexColor;\n"
         "}\0";
 
-    // Create program
-    m_program.create(ugly::Shader(ugly::ShaderType::VERTEX, vertex_shader_source), 
-                     ugly::Shader(ugly::ShaderType::FRAGMENT, fragment_shader_source));
-
     const char *vertex_shader_source_uniform = "#version 330 core\n"
         "layout (location = 0) in vec3 aPos;\n"
         "uniform vec4 ourColor;"
@@ -70,8 +47,63 @@ void TestApplication::initialize()
         "   vertexColor = ourColor;"
         "}\0";
 
+    const char *vertex_shader_source_more_attribute = "#version 330 core\n"
+        "layout (location = 0) in vec3 a_pos;\n"
+        "layout (location = 1) in vec3 a_color;"
+        "out vec3 vertex_color;"
+        "void main()\n"
+        "{\n"
+        "   gl_Position = vec4(a_pos.x, a_pos.y, a_pos.z, 1.0);\n"
+        "   vertex_color = a_color;"
+        "}\0";
+
+    const char *fragment_shader_source_more_attribute = "#version 330 core\n"
+        "out vec4 FragColor;\n"
+        "in vec3 vertex_color;"
+        "void main()\n"
+        "{\n"
+        "   FragColor = vec4(vertex_color, 1.0);\n"
+        "}\0";
+
+    // Simple triangle VA
+    float vertices_simple_triangle[] = 
+    {
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        0.0f,  0.5f, 0.0f
+    };
+
+    m_va_triangle.bind();
+    auto bo = std::make_shared<ugly::VertexBuffer>(sizeof(vertices_simple_triangle), vertices_simple_triangle);
+    bo->setLayout({ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false)});
+    m_va_triangle.addVertexBuffer(bo);
+    m_va_triangle.unbind();
+
+    // More attributes VA . 
+   float vertices_more_attributes[] = 
+   {
+        // positions         // colors
+        0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // bottom right
+        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // bottom left
+        0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // top 
+    }; 
+    m_va_more_attributes.bind();
+    bo = std::make_shared<ugly::VertexBuffer>(sizeof(vertices_more_attributes), vertices_more_attributes);
+    bo->setLayout({ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false),
+                   ugly::BufferElement("a_color", ugly::BufferDataType::FLOAT3, false)});
+    m_va_more_attributes.addVertexBuffer(bo);
+    m_va_more_attributes.unbind();
+
+    // Programs
+    m_program.create(ugly::Shader(ugly::ShaderType::VERTEX, vertex_shader_source), 
+                     ugly::Shader(ugly::ShaderType::FRAGMENT, fragment_shader_source));
+
+
     m_program_uniform.create(ugly::Shader(ugly::ShaderType::VERTEX, vertex_shader_source_uniform), 
                      ugly::Shader(ugly::ShaderType::FRAGMENT, fragment_shader_source));
+
+    m_program_attributes.create(ugly::Shader(ugly::ShaderType::VERTEX, vertex_shader_source_more_attribute), 
+                                     ugly::Shader(ugly::ShaderType::FRAGMENT, fragment_shader_source_more_attribute));
 }
 
 
@@ -116,12 +148,19 @@ void TestApplication::update()
         m_display_manager->drawArrays(0, 3);
         m_va_triangle.unbind();
     }
+    else if(m_sample == 2)
+    {
+        m_program_attributes.use();
+        m_va_more_attributes.bind();
+        m_display_manager->drawArrays(0, 3);
+        m_va_more_attributes.unbind();
+    }
 }
 
 
 void TestApplication::updateImgui()
 {
-    static std::vector<std::string> sample_list({ "simple shader", "uniform"});
+    static std::vector<std::string> sample_list({ "simple shader", "uniform", "more attributes"});
     static std::vector<std::string> render_mode_list({ "line", "fill" });
     ImGui::Begin("Options");
     {

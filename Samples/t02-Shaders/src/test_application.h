@@ -54,9 +54,15 @@ private:
     /*! Vertex array for simple triangle */
     ugly::VertexArrays m_va_triangle;
 
-    /*! Shader program */
+    /*! Vertex array for more attributes */
+    ugly::VertexArrays m_va_more_attributes;
+
+    /*! Basic program */
     ugly::Program m_program;
 
-    /*! Shader program for uniform */
+    /*! Program for uniform */
     ugly::Program m_program_uniform;
+
+    /*! Program for more attributes*/
+    ugly::Program m_program_attributes;
 };
