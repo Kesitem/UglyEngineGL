@@ -39,7 +39,7 @@ set(HEADERS
     input_state.h
     input_button.h 
     input_manager.h
-    display_manager.h
+    renderer.h
     vertex_buffer.h
     index_buffer.h
     vertex_arrays.h
@@ -56,7 +56,7 @@ set(SRCS
     application.cpp
     input_button.cpp 
     input_manager.cpp
-    display_manager.cpp
+    renderer.cpp
     vertex_buffer.cpp
     index_buffer.cpp
     vertex_arrays.cpp

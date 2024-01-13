@@ -7,7 +7,7 @@
 #include "input_state.h"
 #include "input_button.h"
 #include "input_manager.h"
-#include "display_manager.h"
+#include "renderer.h"
 #include "shader.h"
 #include "program.h"
 #include "vertex_buffer.h"

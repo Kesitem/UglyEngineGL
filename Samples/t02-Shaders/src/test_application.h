@@ -43,7 +43,7 @@ private:
     ugly::InputManager* m_input_manager {nullptr};
 
     /*! Display manager */
-    ugly::DisplayManager* m_display_manager {nullptr};
+    ugly::Renderer* m_renderer {nullptr};
 
     /*! Selected sample */
     int m_sample {0};

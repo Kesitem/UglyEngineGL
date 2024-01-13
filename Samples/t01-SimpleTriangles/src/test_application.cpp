@@ -15,7 +15,7 @@ void TestApplication::initialize()
 {
     m_engine = ugly::Engine::getInstance();
     m_input_manager = m_engine->getInputManager();
-    m_display_manager = m_engine->getDisplayManager();
+    m_renderer = m_engine->getRenderer();
 
     m_input_manager->createButton("quit");
     m_input_manager->bindKeyToButton(GLFW_KEY_ESCAPE, "quit");
@@ -169,56 +169,56 @@ void TestApplication::update()
     switch (m_render_mode)
     {
     case 0:
-        m_display_manager->setPolygonMode(ugly::DisplayManager::PolygonMode::LINE);
+        m_renderer->setPolygonMode(ugly::Renderer::PolygonMode::LINE);
         break;
     case 1:
-        m_display_manager->setPolygonMode(ugly::DisplayManager::PolygonMode::FILL);
+        m_renderer->setPolygonMode(ugly::Renderer::PolygonMode::FILL);
         break;
     }
 
-    m_display_manager->setClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    m_display_manager->clear();
+    m_renderer->setClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    m_renderer->clear();
 
     if(m_sample == 0)
     {
         m_program_orange.use();
         m_va_triangle.bind();
-        m_display_manager->drawArrays(0, 3);
+        m_renderer->drawArrays(0, 3);
         m_va_triangle.unbind();
     } 
     else if (m_sample == 1)
     {
         m_program_orange.use();
         m_va_quad.bind();
-        m_display_manager->drawElements(6);
+        m_renderer->drawElements(6);
         m_va_quad.unbind();
     }
     else if (m_sample == 2)
     {
         m_program_orange.use();
         m_va_double_triangle.bind();
-        m_display_manager->drawArrays(0, 6);
+        m_renderer->drawArrays(0, 6);
         m_va_double_triangle.unbind();
     }
     else if (m_sample == 3)
     {
         m_program_orange.use();
         m_va_triangle_0.bind();
-        m_display_manager->drawArrays(0, 3);
+        m_renderer->drawArrays(0, 3);
         m_va_triangle_0.unbind();
         m_va_triangle_1.bind();
-        m_display_manager->drawArrays(0, 3);
+        m_renderer->drawArrays(0, 3);
         m_va_triangle_1.unbind();
     }
     else if (m_sample == 4)
     {
         m_program_orange.use();
         m_va_triangle_0.bind();
-        m_display_manager->drawArrays(0, 3);
+        m_renderer->drawArrays(0, 3);
         m_va_triangle_0.unbind();
         m_program_yellow.use();
         m_va_triangle_1.bind();
-        m_display_manager->drawArrays(0, 3);
+        m_renderer->drawArrays(0, 3);
         m_va_triangle_1.unbind();
     }
 }

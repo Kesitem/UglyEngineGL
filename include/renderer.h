@@ -5,7 +5,7 @@
 namespace ugly
 {
 
-	class DisplayManager
+	class Renderer
 	{
 	public:
 
@@ -19,12 +19,12 @@ namespace ugly
 		/**
 		 * @brief Constructor.
 		 */
-		DisplayManager();
+		Renderer();
 
 		/**
 		 * @brief Destructor.
 		 */
-		virtual ~DisplayManager();
+		virtual ~Renderer();
 
 
 		/**

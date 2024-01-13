@@ -1,4 +1,4 @@
-#include "display_manager.h"
+#include "renderer.h"
 
 
 /**
@@ -80,7 +80,7 @@ void GLAPIENTRY opengl_message_callback(GLenum source, GLenum type, GLuint id, G
 }
 
 
-ugly::DisplayManager::DisplayManager()
+ugly::Renderer::Renderer()
 {
     PLOG_INFO << "Initialize display manager";
 
@@ -103,44 +103,44 @@ ugly::DisplayManager::DisplayManager()
 }
 
 
-ugly::DisplayManager::~DisplayManager()
+ugly::Renderer::~Renderer()
 {
     PLOG_INFO << "Shutdown display manager";
 }
 
 
-void ugly::DisplayManager::setViewport(int _x, int _y, unsigned int _width, unsigned int _height)
+void ugly::Renderer::setViewport(int _x, int _y, unsigned int _width, unsigned int _height)
 {
     // Set default viewport
     glViewport(_x, _y, _width, _height);
 }
 
 
-void ugly::DisplayManager::setClearColor(float _red, float _green, float _blue, float _alpha)
+void ugly::Renderer::setClearColor(float _red, float _green, float _blue, float _alpha)
 {
     glClearColor(_red, _green, _blue, _alpha);
 }
 
 
-void ugly::DisplayManager::clear()
+void ugly::Renderer::clear()
 {
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
 
-void ugly::DisplayManager::setPolygonMode(PolygonMode _mode)
+void ugly::Renderer::setPolygonMode(PolygonMode _mode)
 {
     glPolygonMode(GL_FRONT_AND_BACK, (GLenum)_mode);
 }
 
 
-void ugly::DisplayManager::drawArrays(int32_t _first, uint32_t _count)
+void ugly::Renderer::drawArrays(int32_t _first, uint32_t _count)
 {
     glDrawArrays(GL_TRIANGLES, _first, _count);
 }
 
 
-void ugly::DisplayManager::drawElements(uint32_t _count)
+void ugly::Renderer::drawElements(uint32_t _count)
 {
     glDrawElements(GL_TRIANGLES, _count, GL_UNSIGNED_INT, nullptr);
 }

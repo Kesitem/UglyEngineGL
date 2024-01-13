@@ -4,7 +4,7 @@
 #include "log_formatter.h"
 #include "application.h"
 #include "input_manager.h"
-#include "display_manager.h"
+#include "renderer.h"
 #include "imgui_manager.h"
 
 
@@ -46,11 +46,11 @@ void ugly::Engine::initialize()
 
     glfwMakeContextCurrent(m_window);
 
-    m_display_manager = std::make_unique<DisplayManager>();
+    m_renderer = std::make_unique<Renderer>();
     m_input_manager = std::make_unique<InputManager>();
     m_imgui_manager = std::make_unique<ImguiManager>(m_window);
 
-    m_display_manager->setViewport(0, 0, m_window_width, m_window_height);
+    m_renderer->setViewport(0, 0, m_window_width, m_window_height);
 }
 
 
@@ -65,8 +65,8 @@ void ugly::Engine::shutdown()
     if(m_input_manager.get() != nullptr)
         m_input_manager.reset();
 
-    if (m_display_manager.get() != nullptr)
-        m_display_manager.reset();
+    if (m_renderer.get() != nullptr)
+        m_renderer.reset();
 
     glfwTerminate();
 }
@@ -127,9 +127,9 @@ ugly::InputManager* ugly::Engine::getInputManager() const
 }
 
 
-ugly::DisplayManager* ugly::Engine::getDisplayManager() const
+ugly::Renderer* ugly::Engine::getRenderer() const
 {
-    return m_display_manager.get();
+    return m_renderer.get();
 }
 
 

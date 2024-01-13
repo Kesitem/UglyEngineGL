@@ -15,7 +15,7 @@ void TestApplication::initialize()
 {
     m_engine = ugly::Engine::getInstance();
     m_input_manager = m_engine->getInputManager();
-    m_display_manager = m_engine->getDisplayManager();
+    m_renderer = m_engine->getRenderer();
 
     m_input_manager->createButton("quit");
     m_input_manager->bindKeyToButton(GLFW_KEY_ESCAPE, "quit");
@@ -132,21 +132,21 @@ void TestApplication::update()
     switch (m_render_mode)
     {
     case 0:
-        m_display_manager->setPolygonMode(ugly::DisplayManager::PolygonMode::LINE);
+        m_renderer->setPolygonMode(ugly::Renderer::PolygonMode::LINE);
         break;
     case 1:
-        m_display_manager->setPolygonMode(ugly::DisplayManager::PolygonMode::FILL);
+        m_renderer->setPolygonMode(ugly::Renderer::PolygonMode::FILL);
         break;
     }
 
-    m_display_manager->setClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    m_display_manager->clear();
+    m_renderer->setClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    m_renderer->clear();
 
     if(m_sample == 0)
     {
         m_program.use();
         m_va_triangle.bind();
-        m_display_manager->drawArrays(0, 3);
+        m_renderer->drawArrays(0, 3);
         m_va_triangle.unbind();
     }
     else if(m_sample == 1)
@@ -154,21 +154,21 @@ void TestApplication::update()
         m_program_uniform.use();
         m_program_uniform.setUniform("ourColor", glm::vec4(0.0f, green_value, 0.0f, 1.0f));
         m_va_triangle.bind();
-        m_display_manager->drawArrays(0, 3);
+        m_renderer->drawArrays(0, 3);
         m_va_triangle.unbind();
     }
     else if(m_sample == 2)
     {
         m_program_attributes.use();
         m_va_more_attributes.bind();
-        m_display_manager->drawArrays(0, 3);
+        m_renderer->drawArrays(0, 3);
         m_va_more_attributes.unbind();
     }
     else if(m_sample == 3)
     {
         m_program_inverted.use();
         m_va_more_attributes.bind();
-        m_display_manager->drawArrays(0, 3);
+        m_renderer->drawArrays(0, 3);
         m_va_more_attributes.bind();
     }
     else if(m_sample == 4)
@@ -176,14 +176,14 @@ void TestApplication::update()
         m_program_offset.use();
         m_program_offset.setUniform("u_offset", 0.25f);
         m_va_more_attributes.bind();
-        m_display_manager->drawArrays(0, 3);
+        m_renderer->drawArrays(0, 3);
         m_va_more_attributes.bind();
     }
     else if(m_sample == 5)
     {
         m_program_posascolor.use();
         m_va_triangle.bind();
-        m_display_manager->drawArrays(0, 3);
+        m_renderer->drawArrays(0, 3);
         m_va_triangle.bind();
     }
 }
