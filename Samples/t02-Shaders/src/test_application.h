@@ -65,4 +65,7 @@ private:
 
     /*! Program for more attributes*/
     ugly::Program m_program_attributes;
+
+    /*! Program for inverted shader */
+    ugly::Program m_program_inverted;
 };

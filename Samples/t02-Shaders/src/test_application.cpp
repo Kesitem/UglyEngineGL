@@ -104,6 +104,9 @@ void TestApplication::initialize()
 
     m_program_attributes.create(ugly::Shader(ugly::ShaderType::VERTEX, vertex_shader_source_more_attribute), 
                                      ugly::Shader(ugly::ShaderType::FRAGMENT, fragment_shader_source_more_attribute));
+
+    m_program_inverted.create(ugly::Shader(ugly::ShaderType::VERTEX, std::filesystem::path("data/shaders/inverted.vert")),
+                              ugly::Shader(ugly::ShaderType::FRAGMENT, std::filesystem::path("data/shaders/inverted.frag")));
 }
 
 
@@ -155,12 +158,20 @@ void TestApplication::update()
         m_display_manager->drawArrays(0, 3);
         m_va_more_attributes.unbind();
     }
+    else if(m_sample == 3)
+    {
+        m_program_inverted.use();
+        m_va_more_attributes.bind();
+        m_display_manager->drawArrays(0, 3);
+        m_va_more_attributes.bind();
+
+    }
 }
 
 
 void TestApplication::updateImgui()
 {
-    static std::vector<std::string> sample_list({ "simple shader", "uniform", "more attributes"});
+    static std::vector<std::string> sample_list({ "simple shader", "uniform", "more attributes", "inverted"});
     static std::vector<std::string> render_mode_list({ "line", "fill" });
     ImGui::Begin("Options");
     {
