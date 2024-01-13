@@ -110,6 +110,9 @@ void TestApplication::initialize()
 
     m_program_offset.create(ugly::Shader(ugly::ShaderType::VERTEX, std::filesystem::path("data/shaders/offset.vert")),
                             ugly::Shader(ugly::ShaderType::FRAGMENT, std::filesystem::path("data/shaders/offset.frag")));
+
+    m_program_posascolor.create(ugly::Shader(ugly::ShaderType::VERTEX, std::filesystem::path("data/shaders/posascolor.vert")),
+                            ugly::Shader(ugly::ShaderType::FRAGMENT, std::filesystem::path("data/shaders/posascolor.frag")));
 }
 
 
@@ -176,12 +179,19 @@ void TestApplication::update()
         m_display_manager->drawArrays(0, 3);
         m_va_more_attributes.bind();
     }
+    else if(m_sample == 5)
+    {
+        m_program_posascolor.use();
+        m_va_triangle.bind();
+        m_display_manager->drawArrays(0, 3);
+        m_va_triangle.bind();
+    }
 }
 
 
 void TestApplication::updateImgui()
 {
-    static std::vector<std::string> sample_list({ "simple shader", "uniform", "more attributes", "inverted", "uniform offset"});
+    static std::vector<std::string> sample_list({ "simple shader", "uniform", "more attributes", "inverted", "uniform offset", "position as color"});
     static std::vector<std::string> render_mode_list({ "line", "fill" });
     ImGui::Begin("Options");
     {

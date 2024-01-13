@@ -71,4 +71,7 @@ private:
 
     /*! Program for offset shader */
     ugly::Program m_program_offset;
+
+    /*! Program for pos as color shader */
+    ugly::Program m_program_posascolor;
 };
