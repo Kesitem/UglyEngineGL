@@ -68,4 +68,7 @@ private:
 
     /*! Program for inverted shader */
     ugly::Program m_program_inverted;
+
+    /*! Program for offset shader */
+    ugly::Program m_program_offset;
 };

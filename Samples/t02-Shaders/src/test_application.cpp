@@ -107,6 +107,9 @@ void TestApplication::initialize()
 
     m_program_inverted.create(ugly::Shader(ugly::ShaderType::VERTEX, std::filesystem::path("data/shaders/inverted.vert")),
                               ugly::Shader(ugly::ShaderType::FRAGMENT, std::filesystem::path("data/shaders/inverted.frag")));
+
+    m_program_offset.create(ugly::Shader(ugly::ShaderType::VERTEX, std::filesystem::path("data/shaders/offset.vert")),
+                            ugly::Shader(ugly::ShaderType::FRAGMENT, std::filesystem::path("data/shaders/offset.frag")));
 }
 
 
@@ -164,14 +167,21 @@ void TestApplication::update()
         m_va_more_attributes.bind();
         m_display_manager->drawArrays(0, 3);
         m_va_more_attributes.bind();
-
+    }
+    else if(m_sample == 4)
+    {
+        m_program_offset.use();
+        m_program_offset.setUniform("u_offset", 0.25f);
+        m_va_more_attributes.bind();
+        m_display_manager->drawArrays(0, 3);
+        m_va_more_attributes.bind();
     }
 }
 
 
 void TestApplication::updateImgui()
 {
-    static std::vector<std::string> sample_list({ "simple shader", "uniform", "more attributes", "inverted"});
+    static std::vector<std::string> sample_list({ "simple shader", "uniform", "more attributes", "inverted", "uniform offset"});
     static std::vector<std::string> render_mode_list({ "line", "fill" });
     ImGui::Begin("Options");
     {
