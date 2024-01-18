@@ -50,7 +50,7 @@ namespace ugly
 		/**
 		 * @brief Clear buffers to preset values.
 		 */
-		void clear();
+		void clear() const;
 
 		/**
 		 * @brief Select a polygon rasterization mode.

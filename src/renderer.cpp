@@ -122,7 +122,7 @@ void ugly::Renderer::setClearColor(float _red, float _green, float _blue, float 
 }
 
 
-void ugly::Renderer::clear()
+void ugly::Renderer::clear() const
 {
     glClear(GL_COLOR_BUFFER_BIT);
 }
