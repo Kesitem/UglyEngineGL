@@ -19,6 +19,9 @@ find_package(glad CONFIG REQUIRED)
 # Add imgui
 find_package(imgui CONFIG REQUIRED)
 
+# Add stb
+find_package(Stb REQUIRED)
+
 # Set sources files path
 set(INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -74,7 +77,7 @@ foreach(S ${SRCS})
 endforeach()
 
 # Create library
-add_library(${PROJECT_NAME} STATIC ${ALL_SRCS} ${ALL_HEADERS})
+add_library(${PROJECT_NAME} STATIC ${ALL_SRCS} ${ALL_HEADERS}  ${STB_INCLUDE_DIRS})
 
 # Set C++17 feature
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
