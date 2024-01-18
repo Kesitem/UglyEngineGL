@@ -8,6 +8,7 @@
 #include "input_button.h"
 #include "input_manager.h"
 #include "renderer.h"
+#include "texture.h"
 #include "shader.h"
 #include "program.h"
 #include "vertex_buffer.h"

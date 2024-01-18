@@ -48,6 +48,7 @@ set(HEADERS
     vertex_arrays.h
     shader.h 
     program.h
+    texture.h
     imgui_manager.h
 )
 
@@ -65,6 +66,7 @@ set(SRCS
     vertex_arrays.cpp
     shader.cpp 
     program.cpp
+    texture.cpp
     imgui_manager.cpp
 )
 
