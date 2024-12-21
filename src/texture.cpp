@@ -5,7 +5,7 @@
 #include "stb_image.h"
 
 
-ugly::Texture::Texture(const std::filesystem::path& _path, MinMagFilter _min_filter, MinMagFilter _mag_filter, WrapFilter _wrap_s, WrapFilter _wrap_t)
+ugly::Texture::Texture(const std::filesystem::path& _path, GLint _min_filter, GLint _mag_filter, GLint _wrap_s, GLint _wrap_t)
 {
     // Load texture from file
     int width, height, num_channels;
@@ -39,12 +39,23 @@ ugly::Texture::Texture(const std::filesystem::path& _path, MinMagFilter _min_fil
         break;
     }
 
+    // Create texture object
     glGenTextures(1, &m_id);
-    bind();
+    
+    // Set wrapping
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, _wrap_s);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, _wrap_t);
+
+    // Set filter
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _min_filter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _mag_filter);
+
+    // Create texture data
     glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
-    setWrap(_wrap_s, _wrap_t);
-    setFilter(_min_filter, _mag_filter);
+
+    // Unbind texture
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     // Destroy texture data
     stbi_image_free(data);
@@ -53,31 +64,11 @@ ugly::Texture::Texture(const std::filesystem::path& _path, MinMagFilter _min_fil
 
 ugly::Texture::~Texture()
 {
-    if (m_id != 0)
-    {
-        glDeleteTextures(1, &m_id);
-        m_id = 0;
-    }
 }
 
 
-void ugly::Texture::bind(uint32_t _unit)
+GLuint ugly::Texture::get_id() const
 {
-    glActiveTexture(GL_TEXTURE0 + _unit);
-    glBindTexture(GL_TEXTURE_2D, m_id);
+    return m_id;
 }
 
-
-void ugly::Texture::setFilter(MinMagFilter min_filter, MinMagFilter mag_filter)
-{
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (int32_t)min_filter);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (int32_t)mag_filter);
-}
-
-
-void ugly::Texture::setWrap(WrapFilter _wrap_s, WrapFilter _wrap_t)
-{
-    bind();
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, (int32_t)_wrap_s);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, (int32_t)_wrap_t);
-}

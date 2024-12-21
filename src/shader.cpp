@@ -1,12 +1,12 @@
 ﻿#include "shader.h"
 
-ugly::Shader::Shader(ShaderType _shader_type, const char* _source)
+ugly::Shader::Shader(GLenum _shader_type, const char* _source)
 {
     create(_shader_type, _source);
 }
 
 
-ugly::Shader::Shader(ShaderType _shader_type, const std::filesystem::path& _path)
+ugly::Shader::Shader(GLenum _shader_type, const std::filesystem::path& _path)
 {
     // Open file
     std::ifstream ifs(_path, std::ios::in);
@@ -43,7 +43,7 @@ uint32_t ugly::Shader::getId() const
 }
 
 
-void ugly::Shader::create(ShaderType _shader_type, const char* _source)
+void ugly::Shader::create(GLenum _shader_type, const char* _source)
 {
     m_id = glCreateShader((uint32_t)_shader_type);
     glShaderSource(m_id, 1, &_source, NULL);
@@ -55,7 +55,7 @@ void ugly::Shader::create(ShaderType _shader_type, const char* _source)
     if (!success)
     {
         glGetShaderInfoLog(m_id, 512, NULL, info_log);
-        PLOG_ERROR << (_shader_type == ShaderType::VERTEX ? "Vertex" : "Fragment") << " shader compilation failed: " << info_log;
+        PLOG_ERROR << (_shader_type == GL_VERTEX_SHADER ? "Vertex" : "Fragment") << " shader compilation failed: " << info_log;
         PLOG_DEBUG << "shader source: " << _source;
         glDeleteShader(m_id);
         throw new std::runtime_error("Failed to create shader");

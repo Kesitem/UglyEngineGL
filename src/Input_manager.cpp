@@ -6,7 +6,7 @@
 void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     static ImGuiIO& io = ImGui::GetIO();
-    static auto input_manager = ugly::Engine::getInstance()->getInputManager();
+    static auto input_manager = ugly::Engine::get_instance()->get_input_manager();
 
     ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
 
@@ -50,7 +50,7 @@ ugly::InputManager::InputManager()
 {
     LOG_INFO << "Initialize input manager";
     
-    auto window = ugly::Engine::getInstance()->getWindow();
+    auto window = ugly::Engine::get_instance()->getWindow();
     
     // Register input callbacks
     glfwSetKeyCallback(window, glfwKeyCallback);

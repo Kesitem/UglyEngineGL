@@ -36,7 +36,4 @@ private:
 
     /*! Input manager */
     ugly::InputManager* m_input_manager {nullptr};
-
-    /*! Display manager */
-    ugly::Renderer* m_renderer {nullptr};
 };

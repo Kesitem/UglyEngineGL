@@ -7,33 +7,14 @@ namespace ugly
     class Texture
     {
     public:
-
-        enum class MinMagFilter
-        {
-            NEAREST = GL_NEAREST,
-            LINEAR = GL_LINEAR,
-            NEAREST_MIPMAP_NEAREST = GL_NEAREST_MIPMAP_NEAREST,
-            LINEAR_MIPMAP_NEAREST =  GL_LINEAR_MIPMAP_NEAREST,
-            NEAREST_MIPMAP_LINEAR = GL_NEAREST_MIPMAP_LINEAR,
-            LINEAR_MIPMAP_LINEAR = GL_LINEAR_MIPMAP_LINEAR
-        };
-
-        enum class WrapFilter
-        {
-            REPEAT = GL_REPEAT,
-            MIRRORED_REPEAT = GL_MIRRORED_REPEAT,
-            CLAMP_TO_EDGE = GL_CLAMP_TO_EDGE,
-            CLAMP_TO_BORDER = GL_CLAMP_TO_BORDER
-        };
-
         /**
          * @brief Constructor.
          */
         Texture(const std::filesystem::path& _path,
-            MinMagFilter _min_filter = MinMagFilter::LINEAR_MIPMAP_LINEAR,
-            MinMagFilter _mag_filter = MinMagFilter::LINEAR, 
-            WrapFilter _wrap_s = WrapFilter::REPEAT,
-            WrapFilter _wrap_t = WrapFilter::REPEAT);
+            GLint _min_filter = GL_LINEAR_MIPMAP_LINEAR,
+            GLint _mag_filter = GL_LINEAR, 
+            GLint _wrap_s = GL_REPEAT,
+            GLint _wrap_t = GL_REPEAT);
 
         /**
          * @brief Destructor.
@@ -41,27 +22,11 @@ namespace ugly
         virtual ~Texture();
 
         /**
-         * @brief Bind texture.
+         * @brief Get texture id.
          * 
-         * @param _unit Texture unit
+         * @return Texture id
          */
-        void bind(uint32_t _unit = 0);
-
-        /**
-         * @brief Set texture filtering paramaters
-         * 
-         * @param min_filter Minifying parameter
-         * @param mag_filter Magnifying parameter
-         */
-        void setFilter(MinMagFilter min_filter, MinMagFilter mag_filter);
-
-        /**
-         * @brief Set the texture wrap paramaters.
-         * 
-         * @param wrap_s Wrapping paramater on s
-         * @param wrap_t Wrapping paramater on t
-         */
-        void setWrap(WrapFilter wrap_s, WrapFilter wrap_t);
+        GLuint get_id() const;
 
     private:
 

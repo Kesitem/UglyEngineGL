@@ -121,7 +121,7 @@ GLFWwindow* ugly::Engine::getWindow() const
 }
 
 
-ugly::InputManager* ugly::Engine::getInputManager() const
+ugly::InputManager* ugly::Engine::get_input_manager() const
 {
     return m_input_manager.get();
 }
@@ -130,6 +130,18 @@ ugly::InputManager* ugly::Engine::getInputManager() const
 ugly::Renderer* ugly::Engine::getRenderer() const
 {
     return m_renderer.get();
+}
+
+
+int ugly::Engine::get_window_with() const
+{
+    return m_window_width;
+}
+
+
+int ugly::Engine::get_window_height() const
+{
+    return m_window_height;
 }
 
 

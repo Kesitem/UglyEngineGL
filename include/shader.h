@@ -4,12 +4,6 @@
 
 namespace ugly
 {
-    enum class ShaderType
-    {
-        VERTEX = 35633,
-        FRAGMENT = 35632
-    };
-
     class Shader
     {
     public:
@@ -22,7 +16,7 @@ namespace ugly
          * @param _shader_type  Type of shader
          * @param _source       Source
          */
-        Shader(ShaderType _shader_type, const char* _source);
+        Shader(GLenum _shader_type, const char* _source);
 
         /**
          * @brief Constructor from shader source file.
@@ -30,7 +24,7 @@ namespace ugly
          * @param _shader_type  Type of shader
          * @param _path         Source file path
          */
-        Shader(ShaderType _shader_type, const std::filesystem::path& _path);
+        Shader(GLenum _shader_type, const std::filesystem::path& _path);
 
         /**
          * @brief Destructor.
@@ -44,7 +38,7 @@ namespace ugly
          * @param _path        Path to the source
          * @return false if error
          */
-        bool createFromFile(ShaderType _shader_type, const char* _path);
+        bool createFromFile(GLenum _shader_type, const char* _path);
 
         /**
          * @brief Get the Id object.
@@ -61,7 +55,7 @@ namespace ugly
          * @param   shader_type    Type of shader
          * @param   source         Source of the shader
          */
-        void create(ShaderType _shader_type, const char* _source);
+        void create(GLenum _shader_type, const char* _source);
 
     private:
 

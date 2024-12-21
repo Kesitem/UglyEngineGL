@@ -42,9 +42,6 @@ private:
     /*! Input manager */
     ugly::InputManager* m_input_manager {nullptr};
 
-    /*! Display manager */
-    ugly::Renderer* m_renderer {nullptr};
-
     /*! Selected sample */
     int m_sample {0};
 
@@ -52,10 +49,10 @@ private:
     int m_render_mode{ 1 };
 
     /*! Vertex array for simple triangle */
-    ugly::VertexArrays m_va_triangle;
+    GLuint m_va_triangle;
 
     /*! Vertex array for more attributes */
-    ugly::VertexArrays m_va_more_attributes;
+    GLuint m_va_more_attributes;
 
     /*! Basic program */
     ugly::Program m_program;

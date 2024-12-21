@@ -43,9 +43,9 @@ void ugly::Program::create(const Shader& _vertex_shader, const Shader& _fragment
 }
 
 
-void ugly::Program::use()
+GLuint ugly::Program::get_id() const
 {
-    glUseProgram(m_id);
+    return m_id;
 }
 
 

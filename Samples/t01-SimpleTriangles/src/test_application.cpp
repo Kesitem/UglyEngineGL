@@ -13,9 +13,8 @@ TestApplication::~TestApplication()
 
 void TestApplication::initialize()
 {
-    m_engine = ugly::Engine::getInstance();
-    m_input_manager = m_engine->getInputManager();
-    m_renderer = m_engine->getRenderer();
+    m_engine = ugly::Engine::get_instance();
+    m_input_manager = m_engine->get_input_manager();
 
     m_input_manager->createButton("quit");
     m_input_manager->bindKeyToButton(GLFW_KEY_ESCAPE, "quit");
@@ -42,117 +41,146 @@ void TestApplication::initialize()
         "}\0";
 
     // Create program
-    m_program_orange.create(ugly::Shader(ugly::ShaderType::VERTEX, vertex_shader_source), 
-                     ugly::Shader(ugly::ShaderType::FRAGMENT, fragment_shader_source_orange));
-    m_program_yellow.create(ugly::Shader(ugly::ShaderType::VERTEX, vertex_shader_source), 
-                     ugly::Shader(ugly::ShaderType::FRAGMENT, fragment_shader_source_yellow));
+    m_program_orange.create(ugly::Shader(GL_VERTEX_SHADER, vertex_shader_source), 
+                     ugly::Shader(GL_FRAGMENT_SHADER, fragment_shader_source_orange));
+    m_program_yellow.create(ugly::Shader(GL_VERTEX_SHADER, vertex_shader_source), 
+                     ugly::Shader(GL_FRAGMENT_SHADER, fragment_shader_source_yellow));
 
-    float vertices_simple_triangle[] = 
+    // Simple Triangle
     {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f,  0.5f, 0.0f
-    };
+        float vertices_simple_triangle[] = 
+        {
+            -0.5f, -0.5f, 0.0f,
+            0.5f, -0.5f, 0.0f,
+            0.0f,  0.5f, 0.0f
+        };
 
-    m_va_triangle.bind();
+        // Create va
+        glGenVertexArrays(1, &m_va_triangle);
+        glBindVertexArray(m_va_triangle);
 
-    // Create vertex buffer
-    auto bo = std::make_shared<ugly::VertexBuffer>(sizeof(vertices_simple_triangle), vertices_simple_triangle);
-    bo->setLayout({ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false)});
+        // Create vbo
+        GLuint vbo;
+        glGenBuffers(1, &vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_simple_triangle), vertices_simple_triangle, GL_STATIC_DRAW);
 
-    // Set vertex pointer
-    m_va_triangle.addVertexBuffer(bo);
+        // Set attribs
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);  
 
-    // Unbind vertex array
-    m_va_triangle.unbind();
+        // Unbind vertex array
+        glBindVertexArray(m_va_triangle);
 
-    float vertices_quad[] = 
+    }
+
+    // Sumple quad
     {
-        0.5f,  0.5f, 0.0f,  // top right
-        0.5f, -0.5f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  // bottom left
-        -0.5f,  0.5f, 0.0f   // top left 
-    };
-    unsigned int indices_quad   [] = 
-    {  
-        0, 1, 3,   // first triangle
-        1, 2, 3    // second triangle
-    }; 
+        float vertices_quad[] = 
+        {
+            0.5f,  0.5f, 0.0f,  // top right
+            0.5f, -0.5f, 0.0f,  // bottom right
+            -0.5f, -0.5f, 0.0f,  // bottom left
+            -0.5f,  0.5f, 0.0f   // top left 
+        };
+        unsigned int indices_quad   [] = 
+        {  
+            0, 1, 3,   // first triangle
+            1, 2, 3    // second triangle
+        }; 
 
-    m_va_quad.bind();
+        // Create va
+        glGenVertexArrays(1, &m_va_quad);
+        glBindVertexArray(m_va_quad);
 
-    bo = std::make_shared<ugly::VertexBuffer>(sizeof(vertices_quad), vertices_quad);
-    bo->setLayout({ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false)});
+        GLuint vbo;
+        glGenBuffers(1, &vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_quad), vertices_quad, GL_STATIC_DRAW);
 
-    m_va_quad.addVertexBuffer(bo);
+        GLuint ebo;
+        glGenBuffers(1, &ebo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices_quad), indices_quad, GL_STATIC_DRAW);
 
-    auto ib = std::make_shared<ugly::IndexBuffer>((uint32_t)sizeof(indices_quad), indices_quad);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);  
 
-    m_va_quad.setIndexBuffer(ib);
+        glBindVertexArray(0);
+    }
 
-    m_va_quad.unbind();
-
-    float vertices_double_triangle[] =
+    // Two triangles one vertex array
     {
-        -0.75f, -0.5f, 0.0f,
-        -0.25f, -0.5f, 0.0f,
-        -0.5f,  0.5f, 0.0f,
-        0.25f, -0.5f, 0.0f,
-        0.75f, -0.5f, 0.0f,
-        0.5f,  0.5f, 0.0f,
-    };
+        float vertices_double_triangle[] =
+        {
+            -0.75f, -0.5f, 0.0f,
+            -0.25f, -0.5f, 0.0f,
+            -0.5f,  0.5f, 0.0f,
+            0.25f, -0.5f, 0.0f,
+            0.75f, -0.5f, 0.0f,
+            0.5f,  0.5f, 0.0f,
+        };
 
-    m_va_double_triangle.bind();
+        glGenVertexArrays(1, &m_va_double_triangle);
+        glBindVertexArray(m_va_double_triangle);
 
-    // Create vertex buffer
-    bo = std::make_shared<ugly::VertexBuffer>(sizeof(vertices_double_triangle), vertices_double_triangle);
-    bo->setLayout({ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false)});
+        GLuint vbo;
+        glGenBuffers(1, &vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_double_triangle), vertices_double_triangle, GL_STATIC_DRAW);
 
-    // Set vertex pointer
-    m_va_double_triangle.addVertexBuffer(bo);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);  
 
-    // Unbind vertex array
-    m_va_double_triangle.unbind();
+        // Unbind vertex array
+        glBindVertexArray(0);
+    }
 
-    float vertices_triangle_0[] =
+    // Two triangles two va
     {
-        -0.75f, -0.5f, 0.0f,
-        -0.25f, -0.5f, 0.0f,
-        -0.5f,  0.5f, 0.0f
-    };
+        float vertices_triangle_0[] =
+        {
+            -0.75f, -0.5f, 0.0f,
+            -0.25f, -0.5f, 0.0f,
+            -0.5f,  0.5f, 0.0f
+        };
 
-    // Bind vertex array
-    m_va_triangle_0.bind();
+        // Bind vertex array
+        glGenVertexArrays(1, &m_va_triangle_0);
+        glBindVertexArray(m_va_triangle_0);
 
-    // Create vertex buffer
-    auto bo_triangle_0 = std::make_shared<ugly::VertexBuffer>(sizeof(vertices_triangle_0), vertices_triangle_0);
-    bo_triangle_0->setLayout({ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false)});
+        GLuint vbo;
+        glGenBuffers(1, &vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_triangle_0), vertices_triangle_0, GL_STATIC_DRAW);
 
-    // Set vertex pointer
-    m_va_triangle_0.addVertexBuffer(bo_triangle_0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);  
 
-    // Unbind vertex array
-    m_va_triangle_0.unbind();
+        // Unbind vertex array
+        glBindVertexArray(0);
 
-    float vertices_triangle_1[] =
-    {
-        0.25f, -0.5f, 0.0f,
-        0.75f, -0.5f, 0.0f,
-        0.5f,  0.5f, 0.0f
-    };
+        float vertices_triangle_1[] =
+        {
+            0.25f, -0.5f, 0.0f,
+            0.75f, -0.5f, 0.0f,
+            0.5f,  0.5f, 0.0f
+        };
 
-    // Bind vertex array
-    m_va_triangle_1.bind();
+        // Bind vertex array
+        glGenVertexArrays(1, &m_va_triangle_1);
+        glBindVertexArray(m_va_triangle_1);
 
-    // Create vertex buffer
-    auto bo_triangle_1 = std::make_shared<ugly::VertexBuffer>(sizeof(vertices_triangle_1), vertices_triangle_1);
-    bo_triangle_1->setLayout({ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false)});
+        glGenBuffers(1, &vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_triangle_1), vertices_triangle_1, GL_STATIC_DRAW);
 
-    // Set vertex pointer
-    m_va_triangle_1.addVertexBuffer(bo_triangle_1);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);  
 
-    // Unbind vertex array
-    m_va_triangle_1.unbind();
+        // Unbind vertex array
+        glBindVertexArray(0);
+    }
 }
 
 
@@ -169,57 +197,56 @@ void TestApplication::update()
     switch (m_render_mode)
     {
     case 0:
-        m_renderer->setPolygonMode(ugly::Renderer::PolygonMode::LINE);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         break;
     case 1:
-        m_renderer->setPolygonMode(ugly::Renderer::PolygonMode::FILL);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         break;
     }
 
-    m_renderer->setClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    m_renderer->clear();
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     if(m_sample == 0)
     {
-        m_program_orange.use();
-        m_va_triangle.bind();
-        m_renderer->drawArrays(0, 3);
-        m_va_triangle.unbind();
+        glUseProgram(m_program_orange.get_id());
+        glBindVertexArray(m_va_triangle);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindVertexArray(0);
     } 
     else if (m_sample == 1)
     {
-        m_program_orange.use();
-        m_va_quad.bind();
-        m_renderer->drawElements(6);
-        m_va_quad.unbind();
+        glUseProgram(m_program_orange.get_id());
+        glBindVertexArray(m_va_quad);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
     }
     else if (m_sample == 2)
     {
-        m_program_orange.use();
-        m_va_double_triangle.bind();
-        m_renderer->drawArrays(0, 6);
-        m_va_double_triangle.unbind();
+        glUseProgram(m_program_orange.get_id());
+        glBindVertexArray(m_va_double_triangle);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindVertexArray(0);
     }
     else if (m_sample == 3)
     {
-        m_program_orange.use();
-        m_va_triangle_0.bind();
-        m_renderer->drawArrays(0, 3);
-        m_va_triangle_0.unbind();
-        m_va_triangle_1.bind();
-        m_renderer->drawArrays(0, 3);
-        m_va_triangle_1.unbind();
+        glUseProgram(m_program_orange.get_id());
+        glBindVertexArray(m_va_triangle_0);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindVertexArray(0);
+        glBindVertexArray(m_va_triangle_1);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindVertexArray(0);
     }
     else if (m_sample == 4)
     {
-        m_program_orange.use();
-        m_va_triangle_0.bind();
-        m_renderer->drawArrays(0, 3);
-        m_va_triangle_0.unbind();
-        m_program_yellow.use();
-        m_va_triangle_1.bind();
-        m_renderer->drawArrays(0, 3);
-        m_va_triangle_1.unbind();
+        glUseProgram(m_program_orange.get_id());
+        glBindVertexArray(m_va_triangle_0);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glUseProgram(m_program_yellow.get_id());
+        glBindVertexArray(m_va_triangle_1);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindVertexArray(0);
     }
 }
 

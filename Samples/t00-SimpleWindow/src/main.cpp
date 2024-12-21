@@ -3,7 +3,7 @@
 
 int main()
 {
-	ugly::Engine *engine = ugly::Engine::getInstance();
+	ugly::Engine *engine = ugly::Engine::get_instance();
 	engine->initialize();
 	engine->run(new TestApplication());
 	engine->shutdown();

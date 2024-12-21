@@ -37,6 +37,15 @@ private:
     /*! Input manager */
     ugly::InputManager* m_input_manager {nullptr};
 
-    /*! Display manager */
-    ugly::Renderer* m_renderer {nullptr};
+    /*! Basic program */
+    ugly::Program m_program;
+
+    /*! Vertex array for simple triangle */
+    GLuint m_va_triangle {0};
+
+    /*! Vertex array for simple quad */
+    GLuint m_va_quad {0};
+
+    /*! Texture */
+    unsigned int m_texture_wall {0};
 };

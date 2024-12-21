@@ -32,7 +32,7 @@ namespace ugly
         virtual ~Program();
 
         /**
-         * @Brief Create program from shader objects.
+         * @brief Create program from shader objects.
          * 
          * @param _vertex_shader    Vertex shader 
          * @param _fragment_shader  Program shader
@@ -40,9 +40,11 @@ namespace ugly
         void create(const Shader& _vertex_shader, const Shader& _fragment_shader);
 
         /**
-         * @brief Use shader program.
+         * @brief Get program id.
+         * 
+         * @return Program id
          */
-        void use();
+        GLuint get_id() const;
 
         /**
          * @brief Set the Uniform float value

@@ -13,9 +13,8 @@ TestApplication::~TestApplication()
 
 void TestApplication::initialize()
 {
-    m_engine = ugly::Engine::getInstance();
-    m_input_manager = m_engine->getInputManager();
-    m_renderer = m_engine->getRenderer();
+    m_engine = ugly::Engine::get_instance();
+    m_input_manager = m_engine->get_input_manager();
 
     m_input_manager->createButton("quit");
     m_input_manager->bindKeyToButton(GLFW_KEY_ESCAPE, "quit");
@@ -73,11 +72,20 @@ void TestApplication::initialize()
         0.0f,  0.5f, 0.0f
     };
 
-    m_va_triangle.bind();
-    auto bo = std::make_shared<ugly::VertexBuffer>(sizeof(vertices_simple_triangle), vertices_simple_triangle);
-    bo->setLayout({ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false)});
-    m_va_triangle.addVertexBuffer(bo);
-    m_va_triangle.unbind();
+    // Create va
+    glGenVertexArrays(1, &m_va_triangle);
+    glBindVertexArray(m_va_triangle);
+
+    GLuint vbo;
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_simple_triangle), vertices_simple_triangle, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0); 
+
+    glBindVertexArray(0);
+
 
     // More attributes VA . 
    float vertices_more_attributes[] = 
@@ -86,33 +94,43 @@ void TestApplication::initialize()
         0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // bottom right
         -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // bottom left
         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // top 
-    }; 
-    m_va_more_attributes.bind();
-    bo = std::make_shared<ugly::VertexBuffer>(sizeof(vertices_more_attributes), vertices_more_attributes);
-    bo->setLayout({ugly::BufferElement("a_vertex", ugly::BufferDataType::FLOAT3, false),
-                   ugly::BufferElement("a_color", ugly::BufferDataType::FLOAT3, false)});
-    m_va_more_attributes.addVertexBuffer(bo);
-    m_va_more_attributes.unbind();
+    };
+
+    glGenVertexArrays(1, &m_va_more_attributes);
+    glBindVertexArray(m_va_more_attributes);
+
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_more_attributes), vertices_more_attributes, GL_STATIC_DRAW);
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    // color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glBindVertexArray(0);
 
     // Programs
-    m_program.create(ugly::Shader(ugly::ShaderType::VERTEX, vertex_shader_source), 
-                     ugly::Shader(ugly::ShaderType::FRAGMENT, fragment_shader_source));
+    m_program.create(ugly::Shader(GL_VERTEX_SHADER, vertex_shader_source), 
+                     ugly::Shader(GL_FRAGMENT_SHADER, fragment_shader_source));
 
 
-    m_program_uniform.create(ugly::Shader(ugly::ShaderType::VERTEX, vertex_shader_source_uniform), 
-                     ugly::Shader(ugly::ShaderType::FRAGMENT, fragment_shader_source));
+    m_program_uniform.create(ugly::Shader(GL_VERTEX_SHADER, vertex_shader_source_uniform), 
+                     ugly::Shader(GL_FRAGMENT_SHADER, fragment_shader_source));
 
-    m_program_attributes.create(ugly::Shader(ugly::ShaderType::VERTEX, vertex_shader_source_more_attribute), 
-                                     ugly::Shader(ugly::ShaderType::FRAGMENT, fragment_shader_source_more_attribute));
+    m_program_attributes.create(ugly::Shader(GL_VERTEX_SHADER, vertex_shader_source_more_attribute), 
+                                     ugly::Shader(GL_FRAGMENT_SHADER, fragment_shader_source_more_attribute));
 
-    m_program_inverted.create(ugly::Shader(ugly::ShaderType::VERTEX, std::filesystem::path("data/shaders/inverted.vert")),
-                              ugly::Shader(ugly::ShaderType::FRAGMENT, std::filesystem::path("data/shaders/inverted.frag")));
+    m_program_inverted.create(ugly::Shader(GL_VERTEX_SHADER, std::filesystem::path("data/shaders/inverted.vert")),
+                              ugly::Shader(GL_FRAGMENT_SHADER, std::filesystem::path("data/shaders/inverted.frag")));
 
-    m_program_offset.create(ugly::Shader(ugly::ShaderType::VERTEX, std::filesystem::path("data/shaders/offset.vert")),
-                            ugly::Shader(ugly::ShaderType::FRAGMENT, std::filesystem::path("data/shaders/offset.frag")));
+    m_program_offset.create(ugly::Shader(GL_VERTEX_SHADER, std::filesystem::path("data/shaders/offset.vert")),
+                            ugly::Shader(GL_FRAGMENT_SHADER, std::filesystem::path("data/shaders/offset.frag")));
 
-    m_program_posascolor.create(ugly::Shader(ugly::ShaderType::VERTEX, std::filesystem::path("data/shaders/posascolor.vert")),
-                            ugly::Shader(ugly::ShaderType::FRAGMENT, std::filesystem::path("data/shaders/posascolor.frag")));
+    m_program_posascolor.create(ugly::Shader(GL_VERTEX_SHADER, std::filesystem::path("data/shaders/posascolor.vert")),
+                            ugly::Shader(GL_FRAGMENT_SHADER, std::filesystem::path("data/shaders/posascolor.frag")));
 }
 
 
@@ -132,59 +150,60 @@ void TestApplication::update()
     switch (m_render_mode)
     {
     case 0:
-        m_renderer->setPolygonMode(ugly::Renderer::PolygonMode::LINE);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         break;
     case 1:
-        m_renderer->setPolygonMode(ugly::Renderer::PolygonMode::FILL);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         break;
     }
 
-    m_renderer->setClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    m_renderer->clear();
+
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     if(m_sample == 0)
     {
-        m_program.use();
-        m_va_triangle.bind();
-        m_renderer->drawArrays(0, 3);
-        m_va_triangle.unbind();
+        glUseProgram(m_program.get_id());
+        glBindVertexArray(m_va_triangle);        
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glUseProgram(0);
     }
     else if(m_sample == 1)
     {
-        m_program_uniform.use();
+        glUseProgram(m_program.get_id());
         m_program_uniform.setUniform("ourColor", glm::vec4(0.0f, green_value, 0.0f, 1.0f));
-        m_va_triangle.bind();
-        m_renderer->drawArrays(0, 3);
-        m_va_triangle.unbind();
+        glBindVertexArray(m_va_triangle);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glUseProgram(0);
     }
     else if(m_sample == 2)
     {
-        m_program_attributes.use();
-        m_va_more_attributes.bind();
-        m_renderer->drawArrays(0, 3);
-        m_va_more_attributes.unbind();
+        glUseProgram(m_program_attributes.get_id());
+        glBindVertexArray(m_va_more_attributes);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glUseProgram(0);
     }
     else if(m_sample == 3)
     {
-        m_program_inverted.use();
-        m_va_more_attributes.bind();
-        m_renderer->drawArrays(0, 3);
-        m_va_more_attributes.bind();
+        glUseProgram(m_program_inverted.get_id());
+        glBindVertexArray(m_va_more_attributes);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glUseProgram(0);
     }
     else if(m_sample == 4)
     {
-        m_program_offset.use();
+        glUseProgram(m_program_offset.get_id());
         m_program_offset.setUniform("u_offset", 0.25f);
-        m_va_more_attributes.bind();
-        m_renderer->drawArrays(0, 3);
-        m_va_more_attributes.bind();
+        glBindVertexArray(m_va_more_attributes);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glUseProgram(0);
     }
     else if(m_sample == 5)
     {
-        m_program_posascolor.use();
-        m_va_triangle.bind();
-        m_renderer->drawArrays(0, 3);
-        m_va_triangle.bind();
+        glUseProgram(m_program_posascolor.get_id());
+        glBindVertexArray(m_va_triangle);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glUseProgram(0);
     }
 }
 

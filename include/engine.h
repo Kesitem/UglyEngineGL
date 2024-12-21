@@ -18,7 +18,7 @@ namespace ugly
         /**
          * @brief Get the instance of the engine.
          */
-        static Engine* getInstance()
+        static Engine* get_instance()
         {
             if(!m_instance)
                 m_instance = new Engine();
@@ -59,7 +59,7 @@ namespace ugly
          * 
          * @return Input manager
         */
-        InputManager* getInputManager() const;
+        InputManager* get_input_manager() const;
 
         /**
          * @brief Get display manager.
@@ -75,6 +75,20 @@ namespace ugly
         */
         ImguiManager* getImguiManager() const;
         
+        /**
+         * @brief Get window witdh.
+         * 
+         * @return Window width
+         */
+        int get_window_with() const;
+
+        /**
+         * @brief get window's height.
+         * 
+         * @return Window height
+         */
+        int get_window_height() const;
+
     private:
 
         /**
