@@ -7,6 +7,12 @@ namespace ugly
     class Texture
     {
     public:
+
+        /**
+         * @brief Constructor.
+         */
+        Texture();
+
         /**
          * @brief Constructor.
          */
@@ -20,6 +26,26 @@ namespace ugly
          * @brief Destructor.
          */
         virtual ~Texture();
+
+        /**
+         * @brief Create texture.
+         * 
+         * @param _path Path to texture
+         * @param _min_filter Min filter
+         * @param _mag_filter Mag filter
+         * @param _wrap_s Wrap s
+         * @param _wrap_t Wrap t
+         */
+        void create(const std::filesystem::path& _path,
+            GLint _min_filter = GL_LINEAR_MIPMAP_LINEAR,
+            GLint _mag_filter = GL_LINEAR, 
+            GLint _wrap_s = GL_REPEAT,
+            GLint _wrap_t = GL_REPEAT);
+
+        /**
+         * @brief Destroy texture.
+         */
+        void destroy();
 
         /**
          * @brief Get texture id.

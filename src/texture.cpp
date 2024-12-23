@@ -5,7 +5,24 @@
 #include "stb_image.h"
 
 
+ugly::Texture::Texture()
+{
+}
+
+
 ugly::Texture::Texture(const std::filesystem::path& _path, GLint _min_filter, GLint _mag_filter, GLint _wrap_s, GLint _wrap_t)
+{
+    create(_path, _min_filter, _mag_filter, _wrap_s, _wrap_t);
+}
+
+
+ugly::Texture::~Texture()
+{
+    destroy();
+}
+
+
+void ugly::Texture::create(const std::filesystem::path& _path, GLint _min_filter, GLint _mag_filter, GLint _wrap_s, GLint _wrap_t)
 {
     // Load texture from file
     int width, height, num_channels;
@@ -65,8 +82,13 @@ ugly::Texture::Texture(const std::filesystem::path& _path, GLint _min_filter, GL
 }
 
 
-ugly::Texture::~Texture()
+void ugly::Texture::destroy()
 {
+    if(m_id != 0)
+    {   
+        glDeleteTextures(1, &m_id);
+        m_id = 0;
+    }
 }
 
 

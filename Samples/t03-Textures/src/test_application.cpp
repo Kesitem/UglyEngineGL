@@ -147,8 +147,8 @@ void TestApplication::initialize()
 
     glBindVertexArray(0);
 
-    m_texture_container = std::make_unique<ugly::Texture>("data/textures/container.jpg");
-    m_texture_face = std::make_unique<ugly::Texture>("data/textures/awesomeface.png");
+    m_texture_container.create("data/textures/container.jpg");
+    m_texture_face.create("data/textures/awesomeface.png");
 
     //////////
     // Create progam for triangle
@@ -195,7 +195,7 @@ void TestApplication::update()
     else if(m_sample == 1)
     {
         glUseProgram(m_program_quad.get_id());
-        glBindTexture(GL_TEXTURE_2D, m_texture_container->get_id());
+        glBindTexture(GL_TEXTURE_2D, m_texture_container.get_id());
         glBindVertexArray(m_va_quad);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindTexture(GL_TEXTURE_2D, 0);    
@@ -204,7 +204,7 @@ void TestApplication::update()
     else if(m_sample == 2)
     {
         glUseProgram(m_program_quad_color.get_id());
-        glBindTexture(GL_TEXTURE_2D, m_texture_container->get_id());
+        glBindTexture(GL_TEXTURE_2D, m_texture_container.get_id());
         glBindVertexArray(m_va_quad);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindTexture(GL_TEXTURE_2D, 0);    
@@ -214,9 +214,9 @@ void TestApplication::update()
     {
         glUseProgram(m_program_quad_multi.get_id());
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, m_texture_container->get_id());
+        glBindTexture(GL_TEXTURE_2D, m_texture_container.get_id());
         glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, m_texture_face->get_id());
+        glBindTexture(GL_TEXTURE_2D, m_texture_face.get_id());
         glBindVertexArray(m_va_quad);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glActiveTexture(GL_TEXTURE0);
