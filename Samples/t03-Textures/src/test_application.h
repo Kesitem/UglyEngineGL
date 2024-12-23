@@ -63,8 +63,14 @@ private:
     /*! Quad program with color.*/
     ugly::Program m_program_quad_color;
 
+    /*! Quad program with color.*/
+    ugly::Program m_program_quad_multi;
+
     /*! Container texture */
     std::unique_ptr<ugly::Texture> m_texture_container;
+
+    /*! Face texture */
+    std::unique_ptr<ugly::Texture> m_texture_face;
 
     /*! Texture */
     unsigned int m_texture_wall {0};

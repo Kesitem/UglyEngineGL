@@ -148,6 +148,7 @@ void TestApplication::initialize()
     glBindVertexArray(0);
 
     m_texture_container = std::make_unique<ugly::Texture>("data/textures/container.jpg");
+    m_texture_face = std::make_unique<ugly::Texture>("data/textures/awesomeface.png");
 
     //////////
     // Create progam for triangle
@@ -158,6 +159,12 @@ void TestApplication::initialize()
 
     m_program_quad_color.create(ugly::Shader(GL_VERTEX_SHADER, std::filesystem::path("data/shaders/simple.vert")),
         ugly::Shader(GL_FRAGMENT_SHADER, std::filesystem::path("data/shaders/simple_color.frag")));
+
+    m_program_quad_multi.create(ugly::Shader(GL_VERTEX_SHADER, std::filesystem::path("data/shaders/simple.vert")),
+        ugly::Shader(GL_FRAGMENT_SHADER, std::filesystem::path("data/shaders/simple_multi.frag")));
+    glUseProgram(m_program_quad_multi.get_id());
+    m_program_quad_multi.setUniform("texture0", 0);
+    m_program_quad_multi.setUniform("texture1", 1);
 
 
 }
@@ -203,12 +210,27 @@ void TestApplication::update()
         glBindTexture(GL_TEXTURE_2D, 0);    
         glBindVertexArray(0);
     }
+    else if(m_sample == 3)
+    {
+        glUseProgram(m_program_quad_multi.get_id());
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, m_texture_container->get_id());
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, m_texture_face->get_id());
+        glBindVertexArray(m_va_quad);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, 0); 
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, 0);    
+        glBindVertexArray(0);
+    }
 }
 
 
 void TestApplication::updateImgui()
 {
-    static std::vector<std::string> sample_list({ "Texture triangle", "Textured quad", "Texture quad with color" });    
+    static std::vector<std::string> sample_list({ "Texture triangle", "Textured quad", "Texture quad with color", "Multi texturing" });    
     ImGui::Begin("Options");
     {
         if (ImGui::BeginListBox("Sample"))

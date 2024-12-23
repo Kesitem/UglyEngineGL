@@ -35,6 +35,7 @@ void ugly::Engine::initialize()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
     LOG_INFO << "Window size: " << m_window_width << "x" << m_window_height;
     m_window = glfwCreateWindow(m_window_width, m_window_height, ugly::project::NAME, NULL, NULL);
