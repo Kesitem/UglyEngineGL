@@ -29,6 +29,11 @@ public:
      */
     void update();
 
+    /**
+     * @brief Update IMGUI
+     */
+    void updateImgui();
+
 private:
 
     /*! Engine */
@@ -36,6 +41,12 @@ private:
 
     /*! Input manager */
     ugly::InputManager* m_input_manager {nullptr};
+
+    /*! Current sample */
+    int m_sample {0};
+
+    /*! Render mode (wireframe or fill) */
+    int m_render_mode{ 1 };
 
     /*! Basic program */
     ugly::Program m_program;
@@ -45,6 +56,12 @@ private:
 
     /*! Vertex array for simple quad */
     GLuint m_va_quad {0};
+
+    /*! Quad program .*/
+    ugly::Program m_program_quad;
+    
+    /*! Container texture */
+    std::unique_ptr<ugly::Texture> m_texture_container;
 
     /*! Texture */
     unsigned int m_texture_wall {0};

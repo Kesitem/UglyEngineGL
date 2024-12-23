@@ -42,6 +42,9 @@ ugly::Texture::Texture(const std::filesystem::path& _path, GLint _min_filter, GL
     // Create texture object
     glGenTextures(1, &m_id);
     
+    // Bind the texture
+    glBindTexture(GL_TEXTURE_2D, m_id);
+
     // Set wrapping
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, _wrap_s);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, _wrap_t);

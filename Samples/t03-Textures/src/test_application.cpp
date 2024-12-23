@@ -20,7 +20,7 @@ void TestApplication::initialize()
     m_input_manager->bindKeyToButton(GLFW_KEY_ESCAPE, "quit");
 
     //////////
-    // Create progam
+    // Create progam for triangle
     //////////
 
     m_program.create(ugly::Shader(GL_VERTEX_SHADER, std::filesystem::path("data/shaders/basic.vert")),
@@ -69,49 +69,6 @@ void TestApplication::initialize()
     glBindVertexArray(0);
 
     //////////
-    // Create vertex array for quad
-    //////////
-
-    float vertices[] = 
-    {
-        // positions          // colors           // texture coords
-        0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-        0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
-    };
-
-    unsigned int indices[] = 
-    {
-        0, 1, 3, // first triangle
-        1, 2, 3  // second triangle
-    };
-
-    glGenVertexArrays(1, &m_va_quad);
-    glBindVertexArray(m_va_quad);
-
-    GLuint vbo;
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-    // texture coord attribute
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
-
-    GLuint ebo;
-    glGenBuffers(1, &ebo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-
-    //////////
     // Texture loading (by hand)
     //////////
 
@@ -137,13 +94,67 @@ void TestApplication::initialize()
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
 
+   // Unbind texture
+    glBindTexture(GL_TEXTURE_2D, 0);
+
     // Free texture data
     stbi_image_free(data);
 
+ 
+
+
     //////////
-    // Texture loading (with utility)
+    // Create vertex array for quad
     //////////
 
+    float vertices_quad[] = 
+    {
+        // positions          // colors           // texture coords
+        0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+        0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
+        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+    };
+
+    unsigned int indices_quad[] = 
+    {
+        0, 1, 3, // first triangle
+        1, 2, 3  // second triangle
+    };
+
+    glGenVertexArrays(1, &m_va_quad);
+    glBindVertexArray(m_va_quad);
+
+    GLuint vbo;
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_quad), vertices_quad, GL_STATIC_DRAW);
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    // color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3* sizeof(float)));
+    glEnableVertexAttribArray(1);
+    // texture coords
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2); 
+
+    GLuint ebo;
+    glGenBuffers(1, &ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices_quad), indices_quad, GL_STATIC_DRAW);
+
+    glBindVertexArray(0);
+
+    m_texture_container = std::make_unique<ugly::Texture>("data/textures/container.jpg");
+
+    //////////
+    // Create progam for triangle
+    //////////
+
+    m_program_quad.create(ugly::Shader(GL_VERTEX_SHADER, std::filesystem::path("data/shaders/simple.vert")),
+        ugly::Shader(GL_FRAGMENT_SHADER, std::filesystem::path("data/shaders/simple.frag")));
 
 }
 
@@ -161,9 +172,47 @@ void TestApplication::update()
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glUseProgram(m_program.get_id());
-    glBindTexture(GL_TEXTURE_2D, m_texture_wall);
-    glBindVertexArray(m_va_triangle);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    glBindVertexArray(0);
+    if(m_sample == 0)
+    {
+        glUseProgram(m_program.get_id());
+        glBindTexture(GL_TEXTURE_2D, m_texture_wall);
+        glBindVertexArray(m_va_triangle);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindVertexArray(0);
+    }
+    else if(m_sample == 1)
+    {
+        glUseProgram(m_program_quad.get_id());
+        glBindTexture(GL_TEXTURE_2D, m_texture_container->get_id());
+        glBindVertexArray(m_va_quad);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);    
+        glBindVertexArray(0);
+    }
+}
+
+
+void TestApplication::updateImgui()
+{
+    static std::vector<std::string> sample_list({ "Texture triangle", "Textured quad"});
+    static std::vector<std::string> render_mode_list({ "line", "fill" });
+    ImGui::Begin("Options");
+    {
+        if (ImGui::BeginListBox("Sample"))
+        {
+            for (int n = 0; n < sample_list.size(); n++)
+            {
+                const bool is_selected = (m_sample == n);
+                if (ImGui::Selectable(sample_list[n].c_str(), is_selected))
+                    m_sample = n;
+
+                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                if (is_selected)
+                    ImGui::SetItemDefaultFocus();
+            }
+             ImGui::EndListBox();
+        }
+    }
+    ImGui::End();
 }
