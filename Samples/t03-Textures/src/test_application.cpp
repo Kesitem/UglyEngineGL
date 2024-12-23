@@ -156,6 +156,10 @@ void TestApplication::initialize()
     m_program_quad.create(ugly::Shader(GL_VERTEX_SHADER, std::filesystem::path("data/shaders/simple.vert")),
         ugly::Shader(GL_FRAGMENT_SHADER, std::filesystem::path("data/shaders/simple.frag")));
 
+    m_program_quad_color.create(ugly::Shader(GL_VERTEX_SHADER, std::filesystem::path("data/shaders/simple.vert")),
+        ugly::Shader(GL_FRAGMENT_SHADER, std::filesystem::path("data/shaders/simple_color.frag")));
+
+
 }
 
 
@@ -190,13 +194,21 @@ void TestApplication::update()
         glBindTexture(GL_TEXTURE_2D, 0);    
         glBindVertexArray(0);
     }
+    else if(m_sample == 2)
+    {
+        glUseProgram(m_program_quad_color.get_id());
+        glBindTexture(GL_TEXTURE_2D, m_texture_container->get_id());
+        glBindVertexArray(m_va_quad);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);    
+        glBindVertexArray(0);
+    }
 }
 
 
 void TestApplication::updateImgui()
 {
-    static std::vector<std::string> sample_list({ "Texture triangle", "Textured quad"});
-    static std::vector<std::string> render_mode_list({ "line", "fill" });
+    static std::vector<std::string> sample_list({ "Texture triangle", "Textured quad", "Texture quad with color" });    
     ImGui::Begin("Options");
     {
         if (ImGui::BeginListBox("Sample"))

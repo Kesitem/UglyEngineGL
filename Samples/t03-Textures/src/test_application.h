@@ -59,7 +59,10 @@ private:
 
     /*! Quad program .*/
     ugly::Program m_program_quad;
-    
+
+    /*! Quad program with color.*/
+    ugly::Program m_program_quad_color;
+
     /*! Container texture */
     std::unique_ptr<ugly::Texture> m_texture_container;
 
