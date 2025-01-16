@@ -8,6 +8,14 @@ namespace ugly
     {
     public:
 
+        /*! Filter list */
+        static const std::array<GLint, 6> m_filters;
+
+        /*! Filter list name */
+        static const std::array<const char*, 6> m_filters_name;
+
+    public:
+
         /**
          * @brief Constructor.
          */

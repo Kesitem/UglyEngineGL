@@ -100,9 +100,6 @@ void TestApplication::initialize()
     // Free texture data
     stbi_image_free(data);
 
- 
-
-
     //////////
     // Create vertex array for quad
     //////////
@@ -147,8 +144,14 @@ void TestApplication::initialize()
 
     glBindVertexArray(0);
 
+    //////////
+    // Create textures
+    //////////
     m_texture_container.create("data/textures/container.jpg");
     m_texture_face.create("data/textures/awesomeface.png");
+
+    m_texture_container_wrapping.create("data/textures/container.jpg", GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+    m_texture_face_wrapping.create("data/textures/awesomeface.png", GL_LINEAR, GL_LINEAR);
 
     //////////
     // Create progam for triangle
@@ -162,11 +165,25 @@ void TestApplication::initialize()
 
     m_program_quad_multi.create(ugly::Shader(GL_VERTEX_SHADER, std::filesystem::path("data/shaders/simple.vert")),
         ugly::Shader(GL_FRAGMENT_SHADER, std::filesystem::path("data/shaders/simple_multi.frag")));
+
+    m_program_quad_multi_reverse.create(ugly::Shader(GL_VERTEX_SHADER, std::filesystem::path("data/shaders/simple.vert")),
+        ugly::Shader(GL_FRAGMENT_SHADER, std::filesystem::path("data/shaders/simple_multi_reverse.frag")));
+
+    m_program_sandbox.create(ugly::Shader(GL_VERTEX_SHADER, std::filesystem::path("data/shaders/sandbox.vert")),
+        ugly::Shader(GL_FRAGMENT_SHADER, std::filesystem::path("data/shaders/sandbox.frag")));
+
     glUseProgram(m_program_quad_multi.get_id());
     m_program_quad_multi.setUniform("texture0", 0);
     m_program_quad_multi.setUniform("texture1", 1);
 
+    glUseProgram(m_program_quad_multi_reverse.get_id());
+    m_program_quad_multi_reverse.setUniform("texture0", 0);
+    m_program_quad_multi_reverse.setUniform("texture1", 1);
 
+    glUseProgram(m_program_sandbox.get_id());
+    m_program_sandbox.setUniform("texture0", 0);
+    m_program_sandbox.setUniform("texture1", 1);
+    m_program_sandbox.setUniform("texture_scale", m_texture_scale);
 }
 
 
@@ -212,11 +229,42 @@ void TestApplication::update()
     }
     else if(m_sample == 3)
     {
-        glUseProgram(m_program_quad_multi.get_id());
+        glUseProgram(m_program_sandbox.get_id());
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, m_texture_container.get_id());
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, m_texture_face.get_id());
+        glBindVertexArray(m_va_quad);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, 0); 
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, 0);    
+        glBindVertexArray(0);
+    }
+    else if(m_sample == 4)
+    {
+        glUseProgram(m_program_quad_multi_reverse.get_id());
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, m_texture_container_wrapping.get_id());
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, m_texture_face_wrapping.get_id());
+        glBindVertexArray(m_va_quad);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, 0); 
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, 0);    
+        glBindVertexArray(0);
+    }
+    else if(m_sample == 5)
+    {
+        glUseProgram(m_program_sandbox.get_id());
+        m_program_sandbox.setUniform("texture_scale", m_texture_scale);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, m_texture_container_wrapping.get_id());
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, m_texture_face_wrapping.get_id());
         glBindVertexArray(m_va_quad);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glActiveTexture(GL_TEXTURE0);
@@ -230,7 +278,7 @@ void TestApplication::update()
 
 void TestApplication::updateImgui()
 {
-    static std::vector<std::string> sample_list({ "Texture triangle", "Textured quad", "Texture quad with color", "Multi texturing" });    
+    static std::vector<std::string> sample_list({ "Texture triangle", "Textured quad", "Texture quad with color", "Multi texturing", "Multi texturing reverse", "Sandbox"});    
     ImGui::Begin("Options");
     {
         if (ImGui::BeginListBox("Sample"))
@@ -249,4 +297,15 @@ void TestApplication::updateImgui()
         }
     }
     ImGui::End();
+
+    if(m_sample == 5)
+    {
+        ImGui::Begin("Parameters");
+        {
+            ImGui::SliderFloat("float", &m_texture_scale, 0.0f, 4.0f);
+        }
+        ImGui::End();
+    }
+
+    ImGui::ShowDemoWindow();
 }

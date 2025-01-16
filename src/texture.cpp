@@ -5,6 +5,9 @@
 #include "stb_image.h"
 
 
+const std::array<GLint, 6> ugly::Texture::m_filters = {GL_NEAREST, GL_LINEAR, GL_NEAREST_MIPMAP_NEAREST, GL_LINEAR_MIPMAP_NEAREST, GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR};
+const std::array<const char*, 6> ugly::Texture::m_filters_name = {"GL_NEAREST", "GL_LINEAR", "GL_NEAREST_MIPMAP_NEAREST", "GL_LINEAR_MIPMAP_NEAREST", "GL_NEAREST_MIPMAP_LINEAR", "GL_LINEAR_MIPMAP_LINEAR"};
+
 ugly::Texture::Texture()
 {
 }

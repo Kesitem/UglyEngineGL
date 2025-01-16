@@ -1,6 +1,7 @@
 #pragma once
 
 // C++ standards libs
+#include <array>
 #include <memory>
 #include <map>
 #include <string>

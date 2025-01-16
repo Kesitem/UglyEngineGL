@@ -48,6 +48,9 @@ private:
     /*! Render mode (wireframe or fill) */
     int m_render_mode{ 1 };
 
+    /* Texture size for sandbox */
+    GLfloat m_texture_scale {1.0f};
+
     /*! Basic program */
     ugly::Program m_program;
 
@@ -66,11 +69,23 @@ private:
     /*! Quad program with color.*/
     ugly::Program m_program_quad_multi;
 
+    /*! Quad program with face reverse.*/
+    ugly::Program m_program_quad_multi_reverse;
+
+    /*! Program for the sandbox.*/
+    ugly::Program m_program_sandbox;
+
     /*! Container texture */
     ugly::Texture m_texture_container;
 
     /*! Face texture */
     ugly::Texture m_texture_face;
+
+    /*! Container texture for wrapping */
+    ugly::Texture m_texture_container_wrapping;
+
+    /*! Face texture for wrapping*/
+    ugly::Texture m_texture_face_wrapping;
 
     /*! Texture */
     unsigned int m_texture_wall {0};
