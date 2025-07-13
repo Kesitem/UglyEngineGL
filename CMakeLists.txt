@@ -79,7 +79,7 @@ foreach(S ${SRCS})
 endforeach()
 
 # Create library
-add_library(${PROJECT_NAME} STATIC ${ALL_SRCS} ${ALL_HEADERS}  ${STB_INCLUDE_DIRS})
+add_library(${PROJECT_NAME} STATIC ${ALL_SRCS} ${ALL_HEADERS} ${STB_INCLUDE_DIRS})
 
 # Set C++17 feature
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
