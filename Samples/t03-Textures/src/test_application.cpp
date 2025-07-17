@@ -172,15 +172,15 @@ void TestApplication::initialize()
     m_program_sandbox.create(ugly::Shader(GL_VERTEX_SHADER, std::filesystem::path("data/shaders/sandbox.vert")),
         ugly::Shader(GL_FRAGMENT_SHADER, std::filesystem::path("data/shaders/sandbox.frag")));
 
-    glUseProgram(m_program_quad_multi.get_id());
+    glUseProgram(m_program_quad_multi.getId());
     m_program_quad_multi.setUniform("texture0", 0);
     m_program_quad_multi.setUniform("texture1", 1);
 
-    glUseProgram(m_program_quad_multi_reverse.get_id());
+    glUseProgram(m_program_quad_multi_reverse.getId());
     m_program_quad_multi_reverse.setUniform("texture0", 0);
     m_program_quad_multi_reverse.setUniform("texture1", 1);
 
-    glUseProgram(m_program_sandbox.get_id());
+    glUseProgram(m_program_sandbox.getId());
     m_program_sandbox.setUniform("texture0", 0);
     m_program_sandbox.setUniform("texture1", 1);
     m_program_sandbox.setUniform("texture_scale", m_texture_scale);
@@ -202,7 +202,7 @@ void TestApplication::update()
 
     if(m_sample == 0)
     {
-        glUseProgram(m_program.get_id());
+        glUseProgram(m_program.getId());
         glBindTexture(GL_TEXTURE_2D, m_texture_wall);
         glBindVertexArray(m_va_triangle);
         glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -211,8 +211,8 @@ void TestApplication::update()
     }
     else if(m_sample == 1)
     {
-        glUseProgram(m_program_quad.get_id());
-        glBindTexture(GL_TEXTURE_2D, m_texture_container.get_id());
+        glUseProgram(m_program_quad.getId());
+        glBindTexture(GL_TEXTURE_2D, m_texture_container.getId());
         glBindVertexArray(m_va_quad);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindTexture(GL_TEXTURE_2D, 0);    
@@ -220,8 +220,8 @@ void TestApplication::update()
     }
     else if(m_sample == 2)
     {
-        glUseProgram(m_program_quad_color.get_id());
-        glBindTexture(GL_TEXTURE_2D, m_texture_container.get_id());
+        glUseProgram(m_program_quad_color.getId());
+        glBindTexture(GL_TEXTURE_2D, m_texture_container.getId());
         glBindVertexArray(m_va_quad);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindTexture(GL_TEXTURE_2D, 0);    
@@ -229,11 +229,11 @@ void TestApplication::update()
     }
     else if(m_sample == 3)
     {
-        glUseProgram(m_program_sandbox.get_id());
+        glUseProgram(m_program_sandbox.getId());
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, m_texture_container.get_id());
+        glBindTexture(GL_TEXTURE_2D, m_texture_container.getId());
         glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, m_texture_face.get_id());
+        glBindTexture(GL_TEXTURE_2D, m_texture_face.getId());
         glBindVertexArray(m_va_quad);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glActiveTexture(GL_TEXTURE0);
@@ -244,11 +244,11 @@ void TestApplication::update()
     }
     else if(m_sample == 4)
     {
-        glUseProgram(m_program_quad_multi_reverse.get_id());
+        glUseProgram(m_program_quad_multi_reverse.getId());
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, m_texture_container_wrapping.get_id());
+        glBindTexture(GL_TEXTURE_2D, m_texture_container_wrapping.getId());
         glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, m_texture_face_wrapping.get_id());
+        glBindTexture(GL_TEXTURE_2D, m_texture_face_wrapping.getId());
         glBindVertexArray(m_va_quad);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glActiveTexture(GL_TEXTURE0);
@@ -259,12 +259,12 @@ void TestApplication::update()
     }
     else if(m_sample == 5)
     {
-        glUseProgram(m_program_sandbox.get_id());
+        glUseProgram(m_program_sandbox.getId());
         m_program_sandbox.setUniform("texture_scale", m_texture_scale);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, m_texture_container_wrapping.get_id());
+        glBindTexture(GL_TEXTURE_2D, m_texture_container_wrapping.getId());
         glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, m_texture_face_wrapping.get_id());
+        glBindTexture(GL_TEXTURE_2D, m_texture_face_wrapping.getId());
         glBindVertexArray(m_va_quad);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glActiveTexture(GL_TEXTURE0);

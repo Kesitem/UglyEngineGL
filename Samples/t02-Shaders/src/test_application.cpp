@@ -163,14 +163,14 @@ void TestApplication::update()
 
     if(m_sample == 0)
     {
-        glUseProgram(m_program.get_id());
+        glUseProgram(m_program.getId());
         glBindVertexArray(m_va_triangle);        
         glDrawArrays(GL_TRIANGLES, 0, 3);
         glUseProgram(0);
     }
     else if(m_sample == 1)
     {
-        glUseProgram(m_program.get_id());
+        glUseProgram(m_program.getId());
         m_program_uniform.setUniform("ourColor", glm::vec4(0.0f, green_value, 0.0f, 1.0f));
         glBindVertexArray(m_va_triangle);
         glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -178,21 +178,21 @@ void TestApplication::update()
     }
     else if(m_sample == 2)
     {
-        glUseProgram(m_program_attributes.get_id());
+        glUseProgram(m_program_attributes.getId());
         glBindVertexArray(m_va_more_attributes);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         glUseProgram(0);
     }
     else if(m_sample == 3)
     {
-        glUseProgram(m_program_inverted.get_id());
+        glUseProgram(m_program_inverted.getId());
         glBindVertexArray(m_va_more_attributes);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         glUseProgram(0);
     }
     else if(m_sample == 4)
     {
-        glUseProgram(m_program_offset.get_id());
+        glUseProgram(m_program_offset.getId());
         m_program_offset.setUniform("u_offset", 0.25f);
         glBindVertexArray(m_va_more_attributes);
         glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -200,7 +200,7 @@ void TestApplication::update()
     }
     else if(m_sample == 5)
     {
-        glUseProgram(m_program_posascolor.get_id());
+        glUseProgram(m_program_posascolor.getId());
         glBindVertexArray(m_va_triangle);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         glUseProgram(0);

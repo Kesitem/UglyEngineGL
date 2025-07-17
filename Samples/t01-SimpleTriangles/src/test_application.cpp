@@ -209,28 +209,28 @@ void TestApplication::update()
 
     if(m_sample == 0)
     {
-        glUseProgram(m_program_orange.get_id());
+        glUseProgram(m_program_orange.getId());
         glBindVertexArray(m_va_triangle);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         glBindVertexArray(0);
     } 
     else if (m_sample == 1)
     {
-        glUseProgram(m_program_orange.get_id());
+        glUseProgram(m_program_orange.getId());
         glBindVertexArray(m_va_quad);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
     }
     else if (m_sample == 2)
     {
-        glUseProgram(m_program_orange.get_id());
+        glUseProgram(m_program_orange.getId());
         glBindVertexArray(m_va_double_triangle);
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
     }
     else if (m_sample == 3)
     {
-        glUseProgram(m_program_orange.get_id());
+        glUseProgram(m_program_orange.getId());
         glBindVertexArray(m_va_triangle_0);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         glBindVertexArray(0);
@@ -240,10 +240,10 @@ void TestApplication::update()
     }
     else if (m_sample == 4)
     {
-        glUseProgram(m_program_orange.get_id());
+        glUseProgram(m_program_orange.getId());
         glBindVertexArray(m_va_triangle_0);
         glDrawArrays(GL_TRIANGLES, 0, 3);
-        glUseProgram(m_program_yellow.get_id());
+        glUseProgram(m_program_yellow.getId());
         glBindVertexArray(m_va_triangle_1);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         glBindVertexArray(0);

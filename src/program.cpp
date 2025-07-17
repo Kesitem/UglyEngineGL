@@ -43,7 +43,7 @@ void ugly::Program::create(const Shader& _vertex_shader, const Shader& _fragment
 }
 
 
-GLuint ugly::Program::get_id() const
+GLuint ugly::Program::getId() const
 {
     return m_id;
 }

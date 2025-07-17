@@ -44,7 +44,7 @@ namespace ugly
          * 
          * @return Program id
          */
-        GLuint get_id() const;
+        GLuint getId() const;
 
         /**
          * @brief Set the Uniform float value

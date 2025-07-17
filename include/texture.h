@@ -60,7 +60,7 @@ namespace ugly
          * 
          * @return Texture id
          */
-        GLuint get_id() const;
+        GLuint getId() const;
 
     private:
 

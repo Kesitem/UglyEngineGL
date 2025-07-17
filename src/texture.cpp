@@ -95,7 +95,7 @@ void ugly::Texture::destroy()
 }
 
 
-GLuint ugly::Texture::get_id() const
+GLuint ugly::Texture::getId() const
 {
     return m_id;
 }
